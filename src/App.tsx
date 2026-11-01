@@ -3,6 +3,7 @@ import Hero from "./components/hero/hero";
 import Treatments from "./components/treatments/treatments";
 import About from "./components/about/about";
 import Contact from "./components/contact/contact";
+import Footer from "./components/footer/footer";
 
 import "./App.css";
 export default function App(){
@@ -13,6 +14,7 @@ export default function App(){
     <Treatments />
     <About />
     <Contact />
+    <Footer />
     </>
   );
 }
