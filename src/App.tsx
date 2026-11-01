@@ -1,21 +1,29 @@
-import NavBar from "./components/navbar/navbar";
-import Hero from "./components/hero/hero";
-import Treatments from "./components/treatments/treatments";
-import About from "./components/about/about";
-import Contact from "./components/contact/contact";
-import Footer from "./components/footer/footer";
+import { Routes, Route } from "react-router-dom";
+
+import HomePage from "./pages/homePage";
+import AdminLogin from "./pages/admin/adminLogin";
+import AdminLayout from "./pages/admin/adminLayout";
 
 import "./App.css";
-export default function App() {
 
+export default function App() {
   return (
-    <>
-      <NavBar />
-      <Hero />
-      <Treatments />
-      <About />
-      <Contact />
-      <Footer />
-    </>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+
+      <Route
+        path="/admin"
+        element={
+          <>
+            <HomePage />
+            <AdminLogin />
+          </>
+        }
+      />
+
+      <Route element={<AdminLayout />}>
+        <Route path="/admin/edit" element={<HomePage />} />
+      </Route>
+    </Routes>
   );
 }
