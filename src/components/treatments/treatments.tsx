@@ -30,9 +30,6 @@ export default function Treatments() {
   const location = useLocation();
   const isEditMode = location.pathname === "/admin/edit";
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [selectedTreatment, setSelectedTreatment] =
-    useState<TreatmentContent | null>(null);
-
   const [draftTreatment, setDraftTreatment] = useState<TreatmentContent | null>(
     null,
   );
@@ -44,19 +41,17 @@ export default function Treatments() {
     setIsEditorOpen(true);
   };
 
-  const openTreatmentEditor = (treatment: TreatmentContent) => {
-    setSelectedTreatment(treatment);
-    setDraftTreatment({
-      ...treatment,
-      details: [...treatment.details],
-    });
-  };
+const openTreatmentEditor = (treatment: TreatmentContent) => {
+  setDraftTreatment({
+    ...treatment,
+    details: [...treatment.details],
+  });
+};
 
-  const closeEditor = () => {
-    setIsEditorOpen(false);
-    setSelectedTreatment(null);
-    setDraftTreatment(null);
-  };
+const closeEditor = () => {
+  setIsEditorOpen(false);
+  setDraftTreatment(null);
+};
   const handleSave = async () => {
     if (!draftTreatment) return;
 
@@ -230,7 +225,6 @@ export default function Treatments() {
                 className="treatmentAdminBackButton"
                 onClick={() => {
                   setDraftTreatment(null);
-                  setSelectedTreatment(null);
                 }}
               >
                 ← Tillbaka till behandlingarna
@@ -272,54 +266,54 @@ export default function Treatments() {
                 />
                 <label>Detaljer</label>
 
-<div className="treatmentDetailEditor">
-  {draftTreatment.details.map((detail, index) => (
-    <div className="treatmentDetailInput" key={index}>
-      <input
-        type="text"
-        value={detail}
-        onChange={(e) => {
-          const updatedDetails = [...draftTreatment.details];
-          updatedDetails[index] = e.target.value;
+                <div className="treatmentDetailEditor">
+                  {draftTreatment.details.map((detail, index) => (
+                    <div className="treatmentDetailInput" key={index}>
+                      <input
+                        type="text"
+                        value={detail}
+                        onChange={(e) => {
+                          const updatedDetails = [...draftTreatment.details];
+                          updatedDetails[index] = e.target.value;
 
-          setDraftTreatment({
-            ...draftTreatment,
-            details: updatedDetails,
-          });
-        }}
-      />
+                          setDraftTreatment({
+                            ...draftTreatment,
+                            details: updatedDetails,
+                          });
+                        }}
+                      />
 
-      <button
-        type="button"
-        className="treatmentDetailRemove"
-        onClick={() => {
-          setDraftTreatment({
-            ...draftTreatment,
-            details: draftTreatment.details.filter(
-              (_, i) => i !== index,
-            ),
-          });
-        }}
-        aria-label="Ta bort detalj"
-      >
-        ×
-      </button>
-    </div>
-  ))}
-</div>
+                      <button
+                        type="button"
+                        className="treatmentDetailRemove"
+                        onClick={() => {
+                          setDraftTreatment({
+                            ...draftTreatment,
+                            details: draftTreatment.details.filter(
+                              (_, i) => i !== index,
+                            ),
+                          });
+                        }}
+                        aria-label="Ta bort detalj"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
 
-<button
-  type="button"
-  className="treatmentDetailAdd"
-  onClick={() => {
-    setDraftTreatment({
-      ...draftTreatment,
-      details: [...draftTreatment.details, ""],
-    });
-  }}
->
-  + Lägg till detalj
-</button>
+                <button
+                  type="button"
+                  className="treatmentDetailAdd"
+                  onClick={() => {
+                    setDraftTreatment({
+                      ...draftTreatment,
+                      details: [...draftTreatment.details, ""],
+                    });
+                  }}
+                >
+                  + Lägg till detalj
+                </button>
               </div>
             </>
           ) : (
