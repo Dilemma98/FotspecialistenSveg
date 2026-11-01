@@ -2,6 +2,7 @@
     background: linear-gradient(to right, #ffffff 0%, #ebebeb 100%);
     padding: 7.5em 8% 7.5em;
     color: #28352b;
+    position: relative;
 }
 
 .aboutInner {

@@ -1,8 +1,11 @@
-
 import { useCallback, useEffect, useState } from "react";
 import "./hero.css";
 import "./heroSlideshow.css";
+import "../../components/admin/editButton.css";
 import { supabase } from "../../lib/supabase";
+import { useLocation } from "react-router-dom";
+import EditButton from "../../components/admin/editButton";
+import EditModal from "../../components/admin/editModal";
 
 interface HeroContent {
   note: string;
@@ -26,6 +29,45 @@ export default function Hero() {
   const [paused, setPaused] = useState(false);
   const [content, setContent] = useState<HeroContent | null>(null);
   const slides = content?.slides ?? [];
+  const location = useLocation();
+  const isEditMode = location.pathname === "/admin/edit";
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+const [draftContent, setDraftContent] = useState<HeroContent | null>(null);
+
+const openEditor = () => {
+  if (!content) return;
+
+  setDraftContent({
+    ...content,
+    slides: content.slides.map((slide) => ({ ...slide })),
+  });
+
+  setIsEditorOpen(true);
+};
+
+const closeEditor = () => {
+  setIsEditorOpen(false);
+  setDraftContent(null);
+};
+const handleSave = async () => {
+  if (!draftContent) return;
+
+  const { error } = await supabase
+    .from("site_content")
+    .update({
+      content: draftContent,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("section_key", "hero");
+
+  if (error) {
+    console.error("Kunde inte spara Hero:", error);
+    return;
+  }
+
+  setContent(draftContent);
+  closeEditor();
+};
 
   useEffect(() => {
     async function fetchHeroContent() {
@@ -70,14 +112,18 @@ export default function Hero() {
   }, [paused, current, next, slides.length]);
 
   return (
+    <>
     <section className="hero" id="home">
+{isEditMode && (
+  <EditButton onClick={openEditor} />
+)}
       {content && (
         <>
           <div className="heroContent">
             <span className="heroEyebrow">{content.eyebrow}</span>
 
             <h1>
-              {content.title} <span>{content.titleAccent}</span>
+              {content.title} <span>{content.titleAccent}{""}</span>
               {content.titleEnding}
             </h1>
 
@@ -150,5 +196,88 @@ export default function Hero() {
         </>
       )}
     </section>
+    {draftContent && (
+  <EditModal
+    isOpen={isEditorOpen}
+    title="Redigera startsidan"
+    onClose={closeEditor}
+    onSave={handleSave}
+  >
+    <div className="editFormGroup">
+      <label htmlFor="hero-eyebrow">Liten text ovanför rubriken</label>
+      <input
+        id="hero-eyebrow"
+        type="text"
+        value={draftContent.eyebrow}
+        onChange={(e) =>
+          setDraftContent({
+            ...draftContent,
+            eyebrow: e.target.value,
+          })
+        }
+      />
+    </div>
+
+    <div className="editFormGroup">
+      <label htmlFor="hero-title">Rubrik</label>
+      <input
+        id="hero-title"
+        type="text"
+        value={draftContent.title}
+        onChange={(e) =>
+          setDraftContent({
+            ...draftContent,
+            title: e.target.value,
+          })
+        }
+      />
+    </div>
+
+    <div className="editFormGroup">
+      <label htmlFor="hero-title-accent">Rubrikens färgade del (AVSLUTA MED MELLANSLAG)</label>
+      <input
+        id="hero-title-accent"
+        type="text"
+        value={draftContent.titleAccent}
+        onChange={(e) =>
+          setDraftContent({
+            ...draftContent,
+            titleAccent: e.target.value,
+          })
+        }
+      />
+    </div>
+
+    <div className="editFormGroup">
+      <label htmlFor="hero-title-ending">Text efter rubriken</label>
+      <input
+        id="hero-title-ending"
+        type="text"
+        value={draftContent.titleEnding}
+        onChange={(e) =>
+          setDraftContent({
+            ...draftContent,
+            titleEnding: e.target.value,
+          })
+        }
+      />
+    </div>
+
+    <div className="editFormGroup">
+      <label htmlFor="hero-description">Beskrivning</label>
+      <textarea
+        id="hero-description"
+        value={draftContent.description}
+        onChange={(e) =>
+          setDraftContent({
+            ...draftContent,
+            description: e.target.value,
+          })
+        }
+      />
+    </div>
+  </EditModal>
+)}
+    </>
   );
 }

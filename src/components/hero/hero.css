@@ -63,6 +63,7 @@
 .heroContent h1 span {
     color: #4F8042;
     font-style: italic;
+    margin-right: 0.25em;
 }
 
 .heroDescription {

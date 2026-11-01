@@ -1,6 +1,9 @@
 import "./treatments.css";
+import "../../components/admin/editButton.css";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { useLocation } from "react-router-dom";
+import EditButton from "../../components/admin/editButton";
 
 interface TreatmentContent {
   id: string;
@@ -23,6 +26,8 @@ interface TreatmentInfo {
 export default function Treatments() {
   const [content, setContent] = useState<TreatmentContent[]>([]);
   const [info, setInfo] = useState<TreatmentInfo | null>(null);
+  const location = useLocation();
+  const isEditMode = location.pathname === "/admin/edit";
 
   useEffect(() => {
     async function fetchTreatmentContent() {
@@ -64,6 +69,9 @@ export default function Treatments() {
 
   return (
     <section className="treatments" id="treatments">
+       {isEditMode && (
+       <EditButton onClick={() => console.log("Redigera Behandlingar")} />
+      )}
       <div className="treatmentsInner">
         {info && content.length > 0 && (
           <>

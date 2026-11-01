@@ -1,6 +1,9 @@
 import "./about.css";
+import "../../components/admin/editButton.css";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { useLocation } from "react-router-dom";
+import EditButton from "../../components/admin/editButton";
 
 interface AboutContent {
   lead: string;
@@ -17,6 +20,8 @@ interface AboutContent {
 
 export default function About() {
   const [content, setContent] = useState<AboutContent | null>(null);
+  const location = useLocation();
+  const isEditMode = location.pathname === "/admin/edit";
 
   useEffect(() => {
     async function fetchAboutContent() {
@@ -45,6 +50,9 @@ export default function About() {
 
   return (
     <section className="about" id="about">
+       {isEditMode && (
+            <EditButton onClick={() => console.log("Redigera Behandlingar")} />
+           )}
       <div className="aboutInner">
         {content && (
           <>
