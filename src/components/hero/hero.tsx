@@ -54,7 +54,12 @@ export default function Hero() {
     <section className="hero" id="home">
       <div className="heroContent">
         <span className="heroEyebrow">MEDICINSK FOTVÅRD · SVEG</span>
-
+      {/* <div className="heroDecoration">
+          <img
+            src="/imgs/nadine1.jpeg"
+            alt="Nadine, specialist i medicinsk fotvård"
+          />
+        </div> */}
         <h1>
           Ge dina fötter
           <br />
@@ -124,12 +129,6 @@ export default function Hero() {
           <span>FOTVÅRD MED OMTANKE</span>
         </div>
 
-        <div className="heroDecoration">
-          <img
-            src="/imgs/nadine1.jpeg"
-            alt="Nadine, specialist i medicinsk fotvård"
-          />
-        </div>
       </div>
     </section>
   );

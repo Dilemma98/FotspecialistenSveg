@@ -46,7 +46,7 @@ background: linear-gradient(
 
 .brandLogo img {
     display: block;
-    width: 270px;
+    width: 250px;
     max-width: 100%;
     height: auto;
     object-fit: contain;
@@ -59,7 +59,7 @@ background: linear-gradient(
     align-items: center;
     justify-content: flex-end;
     flex-wrap: wrap;
-    gap: 2em;
+    gap: 3em;
     min-height: 0;
     border-top: 0;
     box-sizing: border-box;
@@ -70,7 +70,7 @@ background: linear-gradient(
     align-items: center;
     justify-content: flex-end;
     flex-wrap: wrap;
-    gap: clamp(1.4em, 3vw, 3em);
+    gap: clamp(1.4em, 3vw, 4em);
     list-style: none;
     padding: 0;
     margin: 0;
@@ -114,45 +114,6 @@ background: linear-gradient(
     width: 100%;
 }
 
-/* BOOKING BUTTON */
-
-.ctaDiv {
-    display: flex;
-    align-items: center;
-}
-
-.ctaButton {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 12px 18px;
-    background: #263b31;
-    color: #f7f5ef;
-    font-family: "DM Sans", sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition:
-        background 0.25s ease,
-        transform 0.25s ease;
-}
-
-.ctaButton span {
-    font-size: 16px;
-    transition: transform 0.25s ease;
-}
-
-.ctaButton:hover {
-    background: #465b49;
-    transform: translateY(-2px);
-}
-
-.ctaButton:hover span {
-    transform: translate(3px, -3px);
-}
 
 /* ==============================
    TABLET

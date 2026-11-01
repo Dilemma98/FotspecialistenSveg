@@ -164,7 +164,7 @@
 
 .heroVisual {
     width: 100%;
-    max-width: 820px;
+    width: 800px;
     justify-self: end;
     position: relative;
     padding: 0 20px 35px 0;
@@ -212,8 +212,8 @@
 
 .heroDecoration {
     position: absolute;
-    top: -28px;
-    right: -12px;
+    top: -2em;
+    left: 17em;
 
     width: 100px;
     height: 100px;
