@@ -60,12 +60,12 @@
 
 .treatmentsPolicy {
     font-size: 0.9rem;
-    color: #28352b;
+    color: #cc4040;
 }
 
 .treatmentList {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     border-top: 1px solid #c9c9bd;
     border-bottom: 1px solid #c9c9bd;
 }
@@ -73,8 +73,9 @@
 .treatmentCard {
     display: flex;
     flex-direction: column;
+    min-width: 0;
     min-height: 380px;
-    padding: 30px 34px 36px;
+    padding: 30px 20px 36px;
     border-right: 1px solid #c9c9bd;
     transition: background 0.3s ease;
 }
@@ -112,10 +113,11 @@
 
 .treatmentContent h3 {
     font-family: "Cormorant Garamond", serif;
-    font-size: 2.2rem;
+    font-size: clamp(1.7rem, 2vw, 2.2rem);
     font-weight: 500;
     margin: 0 0 15px;
     color: #28352b;
+    border-bottom: 0.06em solid #c9c9bd;
 }
 
 .treatmentDescription {
@@ -197,7 +199,7 @@
     margin-left: 5px;
 }
 
-/* Tablet */
+/* Tablet: två kort per rad */
 
 @media (max-width: 1000px) {
     .treatments {
@@ -209,19 +211,25 @@
     }
 
     .treatmentList {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .treatmentCard {
         min-height: auto;
         padding: 30px;
-        border-left: 1px solid #c9c9bd;
         border-bottom: 1px solid #c9c9bd;
-        border-right: 1px solid #c9c9bd;
     }
 
-    .treatmentCard:last-child {
-        border-bottom: none;
+    .treatmentCard:nth-child(odd) {
+        border-left: 1px solid #c9c9bd;
+    }
+
+    .treatmentCard:nth-child(even) {
+        border-left: 0;
+    }
+
+    .treatmentCard:nth-last-child(-n + 2) {
+        border-bottom: 0;
     }
 
     .treatmentTop {
@@ -229,7 +237,7 @@
     }
 }
 
-/* Mobile */
+/* Mobil: ett kort per rad */
 
 @media (max-width: 600px) {
     .treatments {
@@ -251,8 +259,18 @@
         font-size: 0.95rem;
     }
 
+    .treatmentList {
+        grid-template-columns: 1fr;
+    }
+
     .treatmentCard {
         padding: 25px 22px;
+        border-left: 1px solid #c9c9bd !important;
+        border-bottom: 1px solid #c9c9bd !important;
+    }
+
+    .treatmentCard:last-child {
+        border-bottom: 0 !important;
     }
 
     .treatmentContent h3 {

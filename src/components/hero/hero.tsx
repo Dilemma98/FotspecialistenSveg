@@ -4,32 +4,28 @@ import "./heroSlideshow.css";
 
 const slides = [
   {
-    src: "/imgs/Nadine_3.jpg",
+    src: "/imgs/treatment.jpeg",
     alt: "Nadine arbetar med medicinsk fotvård i en lugn och välkomnande miljö",
   },
   {
-    src: "/imgs/Vantrum_s.jpg",
+    src: "/imgs/vantrum.jpeg",
     alt: "Väntrummet hos Fotspecialisten",
   },
   {
-    src: "/imgs/Huset_s.jpg",
-    alt: "Huset på Fjällvägen 4 i Sveg där Fotspecialisten finns",
-  },
-  {
-    src: "/imgs/Strumpor_s.jpg",
+    src: "/imgs/strumpor.jpeg",
     alt: "Strumpor hos Fotspecialisten",
   },
   {
-    src: "/imgs/Vitaminer_s.jpg",
-    alt: "Vitaminer och produkter hos Fotspecialisten",
-  },
-  {
-    src: "/imgs/Blomdahl_s.jpg",
+    src: "/imgs/blomdahls.jpeg",
     alt: "Blomdahls system för öronhåltagning",
+  },
+    {
+    src: "/imgs/huset.jpeg",
+    alt: "Huset på Fjällvägen 4 i Sveg där Fotspecialisten finns",
   },
 ];
 
-const AUTOPLAY_MS = 5000;
+const AUTOPLAY_MS = 4000;
 
 export default function Hero() {
   const [current, setCurrent] = useState(0);
@@ -130,7 +126,7 @@ export default function Hero() {
 
         <div className="heroDecoration">
           <img
-            src="/imgs/Nadine2_s.jpg"
+            src="/imgs/nadine1.jpeg"
             alt="Nadine, specialist i medicinsk fotvård"
           />
         </div>

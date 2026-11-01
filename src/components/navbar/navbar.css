@@ -13,7 +13,7 @@
     grid-template-columns: auto 1fr;
     align-items: center;
     column-gap: 3em;
-    padding: 0.9em 6%;
+    padding: 0.3em 6%;
     background: #e8e9dd;
     border-bottom: 1px solid #deddd3;
 }

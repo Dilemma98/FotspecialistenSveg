@@ -6,7 +6,7 @@ export default function About() {
             <div className="aboutInner">
                 <div className="aboutImageWrapper">
                     <img
-                        src="/imgs/Nadine2_s.jpg"
+                        src="/imgs/nadine1.jpeg"
                         alt="Nadine, medicinsk fotvårdsspecialist"
                         className="aboutImage"
                     />
