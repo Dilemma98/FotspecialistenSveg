@@ -234,7 +234,7 @@ const handleSave = async () => {
     </div>
 
     <div className="editFormGroup">
-      <label htmlFor="hero-title-accent">Rubrikens färgade del (AVSLUTA MED MELLANSLAG)</label>
+      <label htmlFor="hero-title-accent">Rubrikens färgade del</label>
       <input
         id="hero-title-accent"
         type="text"
