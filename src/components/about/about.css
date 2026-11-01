@@ -1,6 +1,6 @@
 .about {
     background: linear-gradient(to right, #ffffff 0%, #ebebeb 100%);
-    padding: 5.5em 8% 5.5em;
+    padding: 7.5em 8% 7.5em;
     color: #28352b;
 }
 
@@ -10,7 +10,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
-    gap: 80px;
+    gap: 15em;
 }
 
 /* Bild */

@@ -6,15 +6,16 @@ import Contact from "./components/contact/contact";
 import Footer from "./components/footer/footer";
 
 import "./App.css";
-export default function App(){
-  return(
+export default function App() {
+
+  return (
     <>
-    <NavBar />
-    <Hero />
-    <Treatments />
-    <About />
-    <Contact />
-    <Footer />
+      <NavBar />
+      <Hero />
+      <Treatments />
+      <About />
+      <Contact />
+      <Footer />
     </>
   );
 }

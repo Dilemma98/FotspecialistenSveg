@@ -1,126 +1,128 @@
 import "./treatments.css";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
 
-const treatments = [
-  {
-    number: "01",
-    title: "Medicinsk fotvård",
-    description:
-      "Ge dina fötter den omsorg de behöver. Behandlingen anpassas efter dina fötters behov och hjälper till att förebygga och behandla vanliga fotbesvär.",
-    details: [
-      "Fotbad och nagelvård",
-      "Behandling av förhårdnader",
-      "Vård av liktornar, vårtor och nagelbesvär",
-      "Avslutande fotvård och rådgivning",
-    ],
-    label: "PERSONLIG FOTVÅRD",
-  },
-  {
-    number: "02",
-    title: "Fotvård på remiss",
-    description:
-      "För dig med diabetes, reumatoid artrit, psoriasis eller cirkulationsrubbning i ben och fötter. Behandlingen utförs på uppdrag av Region Jämtland Härjedalen.",
-    details: [
-      "Remiss utfärdas av läkare eller diabetessköterska",
-      "Upp till 4 behandlingar per år",
-      "Frikort gäller vid giltig remiss",
-      "Individuellt anpassad fotvård",
-    ],
-    label: "FOTVÅRD PÅ REMISS",
-  },
-  {
-    number: "03",
-    title: "Funktionell behandling",
-    description:
-      "En individuellt anpassad behandling med fokus på hur dina fötter fungerar och belastas. Tillsammans ser vi över fotens rörlighet och funktion och utgår från dina behov.",
-    details: [
-      "Genomgång av fotens funktion och rörlighet",
-      "Fokus på belastning och rörelsemönster",
-      "Individuellt anpassade råd och övningar",
-      "Vägledning för att stärka fotens funktion i vardagen",
-    ],
-    label: "FUNKTIONELL FOTANALYS",
-  },
-  {
-    number: "04",
-    title: "Håltagning",
-    description:
-      "Vill du ta hål i öronen eller näsvingen? Här får du ett personligt bemötande och hjälp genom hela behandlingen.",
-    details: [
-      "Håltagning i ytteröra eller näsvinge",
-      "Blomdahls system",
-      "Personlig vägledning och information om eftervård",
-    ],
-    label: "HÅLTAGNING",
-  },
-];
+interface TreatmentContent {
+  id: string;
+  sort_order: number;
+  title: string;
+  description: string;
+  label: string | null;
+  details: string[];
+  is_active: boolean;
+}
+interface TreatmentInfo {
+  note: string;
+  eyebrow: string;
+  headingStart: string;
+  headingEnd: string;
+  description: string;
+  cancellationPolicy: string;
+}
 
 export default function Treatments() {
+  const [content, setContent] = useState<TreatmentContent[]>([]);
+  const [info, setInfo] = useState<TreatmentInfo | null>(null);
+
+  useEffect(() => {
+    async function fetchTreatmentContent() {
+      const { data, error } = await supabase
+        .from("treatments")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      if (error) {
+        console.error("Error fetching treatment content:", error);
+      } else {
+        setContent(data);
+      }
+    }
+
+    fetchTreatmentContent();
+  }, []);
+
+  useEffect(() => {
+    async function fetchTreatmentInfo() {
+      const { data, error } = await supabase
+        .from("site_content")
+        .select("content")
+        .eq("section_key", "treatments")
+        .single();
+
+      if (error) {
+        console.error("Error fetching treatment info:", error);
+      } else {
+        setInfo(data.content);
+      }
+    }
+
+    fetchTreatmentInfo();
+  }, []);
+  useEffect(() => {
+    console.log("Treatment content:", info);
+  }, [info]);
+
   return (
     <section className="treatments" id="treatments">
       <div className="treatmentsInner">
-        <div className="treatmentsHeader">
-          <div className="treatmentsIntro">
-            <span className="sectionEyebrow">OMSORG FRÅN GRUNDEN</span>
+        {info && content.length > 0 && (
+          <>
+            <div className="treatmentsHeader">
+              <div className="treatmentsIntro">
+                <span className="sectionEyebrow">{info.eyebrow}</span>
 
-            <h2>
-              Behandlingar med
-              <br />
-              <span>omtanke i varje steg.</span>
-            </h2>
-          </div>
-
-          <div className="treatmentsLead">
-            <p>
-              Alla fötter är olika. Därför utgår varje behandling från dig, dina
-              behov och vad just dina fötter behöver. Regelbunden fotvård
-              hjälper dig att förebygga fotproblem på sikt och är samtidigt en
-              kontroll av fotens status.
-            </p>
-            <p className="treatmentsPolicy">
-              <b>
-                Avbokning: Minst 4 timmar före bokad tid. Uteblivet besök
-                debiteras med 400:-
-              </b>
-            </p>
-          </div>
-        </div>
-        <div className="treatmentsNote">
-          <span className="noteLine" />
-          <p>
-            Osäker på vilken behandling som passar dig, eller på om du har rätt
-            till remiss? Prata med din läkare eller diabetessköterska, eller hör
-            av dig så hjälper jag dig vidare.
-          </p>
-          <a href="tel:+4668010733">
-            Ring och boka <span>→</span>
-          </a>
-        </div>
-        <div className="treatmentList">
-          {treatments.map((treatment) => (
-            <article className="treatmentCard" key={treatment.number}>
-              <div className="treatmentTop">
-                <span className="treatmentNumber">{treatment.number}</span>
-
-                <span className="treatmentLabel">{treatment.label}</span>
+                <h2>
+                  {info.headingStart} <br />
+                  <span>{info.headingEnd}</span>
+                </h2>
               </div>
 
-              <div className="treatmentContent">
-                <h3>{treatment.title}</h3>
-
-                <p className="treatmentDescription">{treatment.description}</p>
-
-                <ul>
-                  {treatment.details.map((detail) => (
-                    <li key={detail}>
-                      <span className="detailDot" />
-                      {detail}
-                    </li>
-                  ))}
-                </ul>
+              <div className="treatmentsLead">
+                <p>{info.description}</p>
+                <p className="treatmentsPolicy">
+                  <b>{info.cancellationPolicy}</b>
+                </p>
               </div>
-            </article>
-          ))}
-        </div>
+            </div>
+            <div className="treatmentsNote">
+              <span className="noteLine" />
+              <p>{info.note}</p>
+              <a href="tel:+4668010733">
+                Ring och boka <span>→</span>
+              </a>
+            </div>
+            <div className="treatmentList">
+              {content.map((treatment) => (
+                <article className="treatmentCard" key={treatment.id}>
+                  <div className="treatmentTop">
+                    <span className="treatmentNumber">
+                      {String(treatment.sort_order).padStart(2, "0")}
+                    </span>
+
+                    <span className="treatmentLabel">{treatment.label}</span>
+                  </div>
+
+                  <div className="treatmentContent">
+                    <h3>{treatment.title}</h3>
+
+                    <p className="treatmentDescription">
+                      {treatment.description}
+                    </p>
+
+                    <ul>
+                      {treatment.details.map((detail) => (
+                        <li key={detail}>
+                          <span className="detailDot" />
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

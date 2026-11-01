@@ -1,82 +1,91 @@
 import "./about.css";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
+
+interface AboutContent {
+  lead: string;
+  image: string;
+  eyebrow: string;
+  headingStart: string;
+  headingAccent: string;
+  headingEnd: string;
+  imageAlt: string;
+  paragraphs: string[];
+  imageCaption: string;
+  imageSubtitle: string;
+}
 
 export default function About() {
-    return (
-        <section className="about" id="about">
-            <div className="aboutInner">
-                <div className="aboutImageWrapper">
-                    <img
-                        src="/imgs/nadine1.jpeg"
-                        alt="Nadine, medicinsk fotvårdsspecialist"
-                        className="aboutImage"
-                    />
+  const [content, setContent] = useState<AboutContent | null>(null);
 
-                    <div className="aboutImageCaption">
-                        <span>NADINE HÖGDAL</span>
-                        <span>FOTVÅRDSSPECIALIST</span>
-                    </div>
-                </div>
+  useEffect(() => {
+    async function fetchAboutContent() {
+      const { data, error } = await supabase
+        .from("site_content")
+        .select("content")
+        .eq("section_key", "about")
+        .single();
 
-                <div className="aboutContent">
-                    <span className="aboutEyebrow">
-                        PERSONEN BAKOM FOTVÅRDEN
-                    </span>
+      if (error) {
+        console.error("Kunde inte hämta About:", error);
+        return;
+      }
 
-                    <h2>
-                        Ett personligt
-                        <br />
-                        <span>bemötande.</span>
-                        <br />
-                        Varje gång.
-                    </h2>
+      setContent(data.content);
+    }
 
-                    <div className="aboutDivider" />
+    fetchAboutContent();
+  }, []);
 
-                    <p className="aboutLead">
-                        Hej, jag heter Nadine!
-                    </p>
+  useEffect(() => {
+    if (content) {
+      console.log("About content:", content);
+    }
+  }, [content]);
 
-                    <p className="aboutText">
-                        Jag är diplomerad fotvårdsspecialist och har
-                        arbetat med fotvård sedan 2007. För mig är det
-                        viktigt att varje kund känner sig välkommen,
-                        trygg och väl omhändertagen.
-                    </p>
-
-                    <p className="aboutText">
-                        Alla fötter och människor har olika behov.
-                        Därför strävar jag efter att ge en personlig
-                        behandling där omsorg, noggrannhet och ett
-                        gott bemötande alltid står i centrum.
-                    </p>
-
-                    <p className="aboutText">
-                        Har du diabetes eller reumatism? Jag tar emot
-                        remisser och utför behandlingar på uppdrag av
-                        Region Jämtland Härjedalen. Prata med din läkare
-                        eller diabetessköterska.
-                    </p>
-
-                    <p className="aboutText">
-                        Min huvudsakliga verksamhet finns på Fjällvägen 4,
-                        i Swedbank-huset. Jag gör även hembesök efter
-                        överenskommelse.
-                    </p>
-
-                  
-
-                    {/* <a href="#contact" className="aboutButton">
-                        Välkommen att boka
-                        <span>↗</span>
-                    </a> */}
-                </div>
+  return (
+    <section className="about" id="about">
+      <div className="aboutInner">
+        {content && (
+          <>
+            <div className="aboutImageWrapper">
+              <img
+                src={content.image}
+                alt={content.imageAlt}
+                className="aboutImage"
+              />
+              <div className="aboutImageCaption">
+                <span>{content.imageCaption}</span>
+                <span>{content.imageSubtitle}</span>
+              </div>
             </div>
 
-            <div className="aboutBottom">
-                <span>FOTVÅRD MED KUNSKAP</span>
-                <span className="aboutBottomLine" />
-                <span>FOTVÅRD MED OMTANKE</span>
+            <div className="aboutContent">
+              <span className="aboutEyebrow">{content.eyebrow}</span>
+              <h2 className="aboutHeading">
+                {content.headingStart}
+                <br/>
+                <span className="aboutHeadingAccent">{content.headingAccent}</span>
+                <br/>
+                {content.headingEnd}
+              </h2>
+               <div className="aboutDivider"/>
+            <p className="aboutLead">{content.lead}</p>
+            {content.paragraphs.map((paragraph, index) => (
+              <p key={index} className="aboutText">
+                {paragraph}
+                </p>
+            ))}
             </div>
-        </section>
-    );
+          </>
+        )}
+      </div>
+
+      {/* <div className="aboutBottom">
+        <span>FOTVÅRD MED KUNSKAP</span>
+        <span className="aboutBottomLine" />
+        <span>FOTVÅRD MED OMTANKE</span>
+      </div> */}
+    </section>
+  );
 }
