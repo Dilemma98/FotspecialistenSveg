@@ -1,0 +1,321 @@
+
+/* ==============================
+   HERO – FOTSPECIALISTEN
+================================ */
+
+.hero {
+    min-height: 650px;
+    width: 100%;
+    padding: 4em 8% 4em;
+    box-sizing: border-box;
+
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    align-items: center;
+    gap: 7%;
+
+    background: #f7f5ef;
+    position: relative;
+    overflow: hidden;
+}
+
+/* CONTENT */
+
+.heroContent {
+    max-width: 540px;
+    position: relative;
+    z-index: 2;
+    padding: 25px 0;
+}
+
+.heroEyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+
+    font-family: "DM Sans", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: #858779;
+
+    margin-bottom: 30px;
+}
+
+.heroEyebrow::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: #92967e;
+}
+
+.heroContent h1 {
+    margin: 0;
+
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(54px, 5.5vw, 78px);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    color: #263b31;
+}
+
+.heroContent h1 span {
+    color: #4F8042;
+    font-style: italic;
+}
+
+.heroDescription {
+    max-width: 420px;
+    margin: 30px 0 34px;
+
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.9;
+    color: #73766b;
+}
+
+/* BUTTONS */
+
+.heroActions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 26px;
+}
+
+.heroPrimaryButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+
+    padding: 18px 24px;
+
+    background: #263b31;
+    color: #f7f5ef;
+
+    font-family: "DM Sans", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    text-decoration: none;
+
+    transition: background 0.25s ease,
+                transform 0.25s ease;
+}
+
+.heroPrimaryButton span {
+    font-size: 17px;
+    transition: transform 0.25s ease;
+}
+
+.heroPrimaryButton:hover {
+    background: #465b49;
+    transform: translateY(-3px);
+}
+
+.heroPrimaryButton:hover span {
+    transform: translate(3px, -3px);
+}
+
+.heroSecondaryButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+
+    font-family: "DM Sans", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #465548;
+    text-decoration: none;
+
+    transition: gap 0.25s ease;
+}
+
+.heroSecondaryButton:hover {
+    gap: 18px;
+}
+
+/* NOTE */
+
+.heroNote {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-top: 65px;
+
+    font-family: "DM Sans", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: #99998d;
+}
+
+.heroNoteLine {
+    display: block;
+    width: 35px;
+    height: 1px;
+    background: #b8b9a8;
+}
+
+/* IMAGE */
+
+.heroVisual {
+    width: 100%;
+    max-width: 820px;
+    justify-self: end;
+    position: relative;
+    padding: 0 20px 35px 0;
+}
+
+.heroImage {
+    width: 100%;
+    height: 490px;
+    overflow: hidden;
+    background: #e6e2d7;
+     border-radius: 1em;
+}
+
+.heroImage img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.8s ease;
+    
+}
+
+.heroVisual:hover .heroImage img {
+    transform: scale(1.035);
+}
+
+/* IMAGE LABEL */
+
+.heroImageLabel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+
+    font-family: "DM Sans", sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: #858779;
+}
+
+/* DECORATIVE DETAIL */
+
+
+.heroDecoration {
+    position: absolute;
+    top: -28px;
+    right: -12px;
+
+    width: 100px;
+    height: 100px;
+
+    border: 5px solid #f7f5ef;
+    border-radius: 50%;
+    overflow: hidden;
+
+    background: #e6e2d7;
+    z-index: 2;
+
+    box-shadow: 0 5px 20px rgba(38, 59, 49, 0.12);
+}
+
+.heroDecoration img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center -2%;
+}
+
+
+/* ==============================
+   TABLET
+================================ */
+
+@media (max-width: 1000px) {
+    .hero {
+        padding: 65px 6%;
+        gap: 5%;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .heroContent h1 {
+        font-size: clamp(48px, 6vw, 64px);
+    }
+
+    .heroImage {
+        height: 420px;
+    }
+
+    .heroActions {
+        gap: 18px;
+    }
+}
+
+/* ==============================
+   MOBILE
+================================ */
+
+@media (max-width: 700px) {
+    .hero {
+        grid-template-columns: 1fr;
+        gap: 45px;
+        padding: 55px 7% 60px;
+    }
+
+    .heroContent {
+        max-width: 100%;
+    }
+
+    .heroContent h1 {
+        font-size: clamp(52px, 12vw, 68px);
+    }
+
+    .heroDescription {
+        font-size: 13px;
+        margin: 25px 0 28px;
+    }
+
+    .heroNote {
+        margin-top: 38px;
+    }
+
+    .heroVisual {
+        width: 100%;
+        max-width: none;
+        padding: 0 12px 28px 0;
+    }
+
+    .heroImage {
+        height: 390px;
+    }
+
+    .heroDecoration {
+        width: 68px;
+        height: 68px;
+        font-size: 31px;
+        right: -2px;
+        top: -20px;
+    }
+}
+
+@media (max-width: 400px) {
+    .heroActions {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .heroImage {
+        height: 310px;
+    }
+}

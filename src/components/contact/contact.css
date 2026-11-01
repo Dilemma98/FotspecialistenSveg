@@ -1,0 +1,188 @@
+.contact {
+    background: #E8E9DD;
+    color: #263b31;
+    padding: 1.5em 8% 1.5em ;
+}
+
+.contactInner {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 0.85fr;
+    gap: 120px;
+    align-items: start;
+}
+
+/* Rubrik och introduktion */
+
+.contactEyebrow {
+    display: block;
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: #69765f;
+    margin-top: 3em;
+}
+
+.contactHeading h2 {
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(3.8rem, 6vw, 6rem);
+    font-weight: 400;
+    line-height: 0.92;
+    margin: 1.5em 0 30px;
+    color: #263b31;
+}
+
+.contactHeading h2 span {
+      color: #4F8042;
+    font-style: italic;
+}
+
+.contactHeading > p {
+    max-width: 390px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.9;
+    color: #596358;
+    margin: 0 0 35px;
+}
+
+.contactMainButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 35px;
+    padding: 16px 22px;
+    background: #354536;
+    color: #f7f5ef;
+    text-decoration: none;
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: background 0.25s ease;
+}
+
+.contactMainButton:hover {
+    background: #68775d;
+}
+
+/* Kontaktuppgifter */
+
+.contactDetails {
+    border-top: 1px solid rgba(38, 59, 49, 0.25);
+    margin-top: 3.125em;
+}
+
+.contactItem {
+    padding: 1.75em 0 2em;
+    border-bottom: 1px solid rgba(38, 59, 49, 0.25);
+}
+
+.contactItemLabel {
+    display: block;
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.17em;
+    color: #75836a;
+    margin-bottom: 13px;
+}
+
+.contactItem h3 {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0 0 8px;
+    color: #263b31;
+}
+
+.contactItem p {
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.83rem;
+    line-height: 1.8;
+    color: #596358;
+    margin: 0 0 15px;
+}
+
+.contactTextLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #354536;
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(53, 69, 54, 0.5);
+    padding-bottom: 4px;
+    transition: color 0.2s ease;
+}
+
+.contactTextLink:hover {
+    color: #75836a;
+}
+
+.contactPending {
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.75rem;
+    color: #75836a;
+    font-style: italic;
+}
+
+/* Nederkant */
+
+.contactBottom {
+    max-width: 1300px;
+    margin: 110px auto 0;
+    padding-top: 25px;
+    border-top: 1px solid rgba(38, 59, 49, 0.25);
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: #75836a;
+}
+
+/* .contactBottomLine {
+    flex: 1;
+    height: 1px;
+    background: rgba(38, 59, 49, 0.25);
+} */
+
+/* Tablet */
+
+@media (max-width: 900px) {
+    .contact {
+        padding: 95px 6% 30px;
+    }
+
+    .contactInner {
+        gap: 60px;
+    }
+}
+
+/* Mobil */
+
+@media (max-width: 650px) {
+    .contact {
+        padding: 80px 7% 25px;
+    }
+
+    .contactInner {
+        grid-template-columns: 1fr;
+        gap: 60px;
+    }
+
+    .contactHeading h2 {
+        font-size: 4rem;
+    }
+
+    .contactBottom {
+        margin-top: 70px;
+        gap: 12px;
+        font-size: 0.46rem;
+    }
+}

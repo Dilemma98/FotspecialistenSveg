@@ -1,0 +1,256 @@
+.about {
+    background: #f7f5ef;
+    padding: 4.5em 8% 4.5em;
+    color: #28352b;
+}
+
+.aboutInner {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 80px;
+}
+
+/* Bild */
+
+.aboutImageWrapper {
+    position: relative;
+    max-width: 490px;
+    width: 100%;
+    height: clamp(400px, 74vh, 620px);
+}
+
+.aboutImage {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center 0%;
+    border-radius: 1em;
+}
+
+.aboutImageCaption {
+    position: absolute;
+    bottom: 22px;
+    left: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 16px 20px;
+    background: rgba(247, 245, 239, 0.94);
+}
+
+.aboutImageCaption span:first-child {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.4rem;
+    color: #28352b;
+}
+
+.aboutImageCaption span:last-child {
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    color: #7b846e;
+}
+
+.aboutImageNumber {
+    position: absolute;
+    top: -25px;
+    right: -25px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 2rem;
+    color: #89917d;
+}
+
+/* Text */
+
+.aboutContent {
+    max-width: 640px;
+    padding: 0;
+}
+
+.aboutEyebrow {
+    display: block;
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: #89917d;
+    margin-bottom: 20px;
+}
+
+.aboutContent h2 {
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(3rem, 9vh, 5rem);
+    font-weight: 400;
+    line-height: 0.95;
+    color: #28352b;
+    margin: 0;
+}
+
+.aboutContent h2 span {
+    color: #4F8042;
+    font-style: italic;
+}
+
+.aboutDivider {
+    width: 55px;
+    height: 1px;
+    background: #a5aa96;
+    margin: 28px 0 20px;
+}
+
+.aboutLead {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.7rem;
+    color: #354536;
+    margin: 0 0 12px;
+}
+
+.aboutText {
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.9;
+    color: #73766b;
+    margin: 0 0 15px;
+}
+
+.aboutSignature {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 24px 0 0;
+}
+
+.signatureLine {
+    width: 35px;
+    height: 1px;
+    background: #89917d;
+}
+
+.aboutSignature span:last-child {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 2rem;
+    font-style: italic;
+    color: #52634f;
+}
+
+.aboutButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 35px;
+    padding: 1em 1.5em;
+    background: #354536;
+    color: #f7f5ef;
+    text-decoration: none;
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: background 0.25s ease;
+}
+
+.aboutButton:hover {
+    background: #68775d;
+}
+
+.aboutButton span {
+    font-size: 1rem;
+}
+
+/* Avslutande detalj */
+
+.aboutBottom {
+    max-width: 1300px;
+    margin: 44px auto 0;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: #89917d;
+}
+
+.aboutBottomLine {
+    height: 1px;
+    flex: 1;
+    background: #d9d8ce;
+}
+
+/* Stora skärmar: fast bildkolumn, resten går till texten */
+
+@media (min-width: 1001px) {
+    .aboutInner {
+        grid-template-columns: 490px 1fr;
+    }
+}
+
+/* Tablet */
+
+@media (max-width: 1000px) {
+    .about {
+        padding: 60px 6% 30px;
+    }
+
+    .aboutInner {
+        gap: 40px;
+    }
+
+    .aboutImageWrapper {
+        height: 540px;
+    }
+
+    .aboutContent h2 {
+        font-size: 4rem;
+    }
+}
+
+/* Mobil */
+
+@media (max-width: 700px) {
+    .about {
+        padding: 50px 7% 28px;
+    }
+
+    .aboutInner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .aboutImageWrapper {
+        max-width: none;
+        height: 440px;
+    }
+
+    .aboutImageNumber {
+        right: 12px;
+    }
+
+    .aboutContent {
+        padding: 0;
+    }
+
+    .aboutContent h2 {
+        font-size: 3.8rem;
+    }
+
+    .aboutBottom {
+        margin-top: 45px;
+        gap: 12px;
+        font-size: 0.48rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .aboutImageWrapper {
+        height: 360px;
+    }
+
+    .aboutContent h2 {
+        font-size: 3.2rem;
+    }
+}
