@@ -14,7 +14,7 @@
     align-items: center;
     gap: 7%;
 
-    background: #f7f5ef;
+    background: linear-gradient(to right, #ffffff 0%, #ebebeb 100%);
     position: relative;
     overflow: hidden;
 }

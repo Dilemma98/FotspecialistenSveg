@@ -1,6 +1,6 @@
 .about {
-    background: #f7f5ef;
-    padding: 4.5em 8% 4.5em;
+    background: linear-gradient(to right, #ffffff 0%, #ebebeb 100%);
+    padding: 5.5em 8% 5.5em;
     color: #28352b;
 }
 
@@ -39,20 +39,22 @@
     flex-direction: column;
     gap: 5px;
     padding: 16px 20px;
-    background: rgba(247, 245, 239, 0.94);
+    background: rgba(247, 245, 239, 0.432);
+    border-radius: 0.5em;
 }
 
 .aboutImageCaption span:first-child {
     font-family: "Cormorant Garamond", serif;
     font-size: 1.4rem;
-    color: #28352b;
+    color: #ffffff;
+    letter-spacing: 0.02em;
 }
 
 .aboutImageCaption span:last-child {
     font-family: "DM Sans", sans-serif;
-    font-size: 0.58rem;
+    font-size: 0.8rem;
     letter-spacing: 0.15em;
-    color: #7b846e;
+    color: #dfdfdf;
 }
 
 .aboutImageNumber {

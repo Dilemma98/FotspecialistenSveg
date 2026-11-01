@@ -12,7 +12,7 @@ export default function About() {
                     />
 
                     <div className="aboutImageCaption">
-                        <span>NADINE</span>
+                        <span>NADINE HÖGDAL</span>
                         <span>FOTVÅRDSSPECIALIST</span>
                     </div>
                 </div>
@@ -63,10 +63,7 @@ export default function About() {
                         överenskommelse.
                     </p>
 
-                    <div className="aboutSignature">
-                        <span className="signatureLine" />
-                        <span>Nadine</span>
-                    </div>
+                  
 
                     {/* <a href="#contact" className="aboutButton">
                         Välkommen att boka

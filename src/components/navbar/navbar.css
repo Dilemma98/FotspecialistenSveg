@@ -13,8 +13,13 @@
     grid-template-columns: auto 1fr;
     align-items: center;
     column-gap: 3em;
-    padding: 0.3em 6%;
-    background: #e8e9dd;
+    padding: 0.85em 6%;
+background: linear-gradient(
+    135deg,
+    #f5f3e9 0%,
+    #e8e9dd 45%,
+    #cfd5c5 100%
+);
     border-bottom: 1px solid #deddd3;
 }
 

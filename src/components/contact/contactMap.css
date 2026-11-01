@@ -1,30 +1,26 @@
-/* ==============================
-   KONTAKT – KARTA
-================================ */
-
 .contactMap {
-    width: 100%;
-    max-width: none;
-    margin: 36px 0 0;
-    border: 1px solid #c9c9bd;
-    line-height: 0;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #c9c9bd;
+  line-height: 0;
 }
 
 .contactMap iframe {
-    display: block;
-    width: 100%;
-    height: 380px;
-    border: 0;
-    /* Dämpar kartans färger så att den passar sidans palett */
-    filter: saturate(0.65) contrast(0.95);
+  display: block;
+  width: 100%;
+  height: 500px;
+  border: 0;
+  filter: saturate(0.65) contrast(0.95);
 }
 
-@media (max-width: 600px) {
-    .contactMap {
-        margin-top: 36px;
-    }
+@media (max-width: 900px) {
+  .contactMap iframe {
+    height: 430px;
+  }
+}
 
-    .contactMap iframe {
-        height: 300px;
-    }
+@media (max-width: 650px) {
+  .contactMap iframe {
+    height: 300px;
+  }
 }

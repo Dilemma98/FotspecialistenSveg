@@ -44,8 +44,8 @@ html {
     flex-wrap: wrap;
     gap: 6px 24px;
     padding: 1.1em 6%;
-    background: #e8e9dd;
-    border-top: 1px solid #deddd3;
+background: linear-gradient(135deg, #e8e9dd 0%, #cfd5c5 100%);
+    /* border-top: 1px solid #deddd3; */
     font-family: "DM Sans", sans-serif;
     font-size: 13px;
     font-weight: 500;

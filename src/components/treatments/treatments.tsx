@@ -79,12 +79,22 @@ export default function Treatments() {
             <p className="treatmentsPolicy">
               <b>
                 Avbokning: Minst 4 timmar före bokad tid. Uteblivet besök
-                debiteras med 300:-
+                debiteras med 400:-
               </b>
             </p>
           </div>
         </div>
-
+        <div className="treatmentsNote">
+          <span className="noteLine" />
+          <p>
+            Osäker på vilken behandling som passar dig, eller på om du har rätt
+            till remiss? Prata med din läkare eller diabetessköterska, eller hör
+            av dig så hjälper jag dig vidare.
+          </p>
+          <a href="tel:+4668010733">
+            Ring och boka <span>→</span>
+          </a>
+        </div>
         <div className="treatmentList">
           {treatments.map((treatment) => (
             <article className="treatmentCard" key={treatment.number}>
@@ -110,18 +120,6 @@ export default function Treatments() {
               </div>
             </article>
           ))}
-        </div>
-
-        <div className="treatmentsNote">
-          <span className="noteLine" />
-          <p>
-            Osäker på vilken behandling som passar dig, eller på om du har rätt
-            till remiss? Prata med din läkare eller diabetessköterska, eller hör
-            av dig så hjälper jag dig vidare.
-          </p>
-          <a href="tel:+4668010733">
-            Ring och boka <span>→</span>
-          </a>
         </div>
       </div>
     </section>
