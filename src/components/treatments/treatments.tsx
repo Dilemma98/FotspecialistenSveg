@@ -160,7 +160,7 @@ const closeEditor = () => {
 
                 <h2>
                   {info.headingStart} <br />
-                  <span>{info.headingEnd}</span>
+                  <span>{info.headingEnd}.</span>
                 </h2>
               </div>
 
