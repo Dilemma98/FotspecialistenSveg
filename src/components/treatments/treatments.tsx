@@ -36,23 +36,52 @@ export default function Treatments() {
   const [updatingTreatmentId, setUpdatingTreatmentId] = useState<string | null>(
     null,
   );
+  const [draftInfo, setDraftInfo] = useState<TreatmentInfo | null>(null);
 
   const openEditor = () => {
     setIsEditorOpen(true);
   };
+  const openInfoEditor = () => {
+    if (!info) return;
 
-const openTreatmentEditor = (treatment: TreatmentContent) => {
-  setDraftTreatment({
-    ...treatment,
-    details: [...treatment.details],
-  });
-};
+    setDraftInfo({ ...info });
+  };
 
-const closeEditor = () => {
-  setIsEditorOpen(false);
-  setDraftTreatment(null);
-};
+  const openTreatmentEditor = (treatment: TreatmentContent) => {
+    setDraftTreatment({
+      ...treatment,
+      details: [...treatment.details],
+    });
+  };
+
+  const closeEditor = () => {
+    setIsEditorOpen(false);
+    setDraftTreatment(null);
+    setDraftInfo(null);
+  };
   const handleSave = async () => {
+    // Spara informationstexten ovanför behandlingarna
+    if (draftInfo) {
+      const { error } = await supabase
+        .from("site_content")
+        .update({
+          content: draftInfo,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("section_key", "treatments");
+
+      if (error) {
+        console.error("Kunde inte spara behandlingstexten:", error);
+        return;
+      }
+
+      setInfo(draftInfo);
+      setDraftInfo(null);
+      closeEditor();
+      return;
+    }
+
+    // Spara en enskild behandling
     if (!draftTreatment) return;
 
     const { error } = await supabase
@@ -214,11 +243,83 @@ const closeEditor = () => {
       {isEditMode && (
         <EditModal
           isOpen={isEditorOpen}
-          title="Hantera behandlingar"
+          title={
+            draftInfo
+              ? "Redigera behandlingstext"
+              : draftTreatment
+                ? "Redigera behandling"
+                : "Hantera behandlingar"
+          }
           onClose={closeEditor}
           onSave={handleSave}
         >
-          {draftTreatment ? (
+          {draftInfo ? (
+            <>
+              <button
+                type="button"
+                className="treatmentAdminBackButton"
+                onClick={() => setDraftInfo(null)}
+              >
+                ← Tillbaka till behandlingarna
+              </button>
+
+              <div className="editFormGroup">
+                <label>Introduktion</label>
+                <input
+                  type="text"
+                  value={draftInfo.eyebrow}
+                  onChange={(e) =>
+                    setDraftInfo({ ...draftInfo, eyebrow: e.target.value })
+                  }
+                />
+
+                <label>Rubrik – första delen</label>
+                <input
+                  type="text"
+                  value={draftInfo.headingStart}
+                  onChange={(e) =>
+                    setDraftInfo({ ...draftInfo, headingStart: e.target.value })
+                  }
+                />
+
+                <label>Rubrik – andra delen</label>
+                <input
+                  type="text"
+                  value={draftInfo.headingEnd}
+                  onChange={(e) =>
+                    setDraftInfo({ ...draftInfo, headingEnd: e.target.value })
+                  }
+                />
+
+                <label>Beskrivning</label>
+                <textarea
+                  value={draftInfo.description}
+                  onChange={(e) =>
+                    setDraftInfo({ ...draftInfo, description: e.target.value })
+                  }
+                />
+
+                <label>Avbokningspolicy</label>
+                <textarea
+                  value={draftInfo.cancellationPolicy}
+                  onChange={(e) =>
+                    setDraftInfo({
+                      ...draftInfo,
+                      cancellationPolicy: e.target.value,
+                    })
+                  }
+                />
+
+                <label>Notis ovanför behandlingarna</label>
+                <textarea
+                  value={draftInfo.note}
+                  onChange={(e) =>
+                    setDraftInfo({ ...draftInfo, note: e.target.value })
+                  }
+                />
+              </div>
+            </>
+          ) : draftTreatment ? (
             <>
               <button
                 type="button"
@@ -317,38 +418,49 @@ const closeEditor = () => {
               </div>
             </>
           ) : (
-            <div className="treatmentAdminList">
-              {content.map((treatment) => (
-                <div key={treatment.id} className="treatmentAdminItem">
-                  <div>
-                    <h3>{treatment.title}</h3>
+            <>
+              <button
+                type="button"
+                className="treatmentAdminEditButton"
+                onClick={openInfoEditor}
+              >
+                Redigera texten ovanför behandlingarna →
+              </button>
+
+              <div className="treatmentAdminList">
+                {content.map((treatment) => (
+                  <div key={treatment.id} className="treatmentAdminItem">
+                    <div>
+                      <h3>{treatment.title}</h3>
+
+                      <button
+                        type="button"
+                        className={`treatmentAdminStatus ${
+                          treatment.is_active ? "active" : "inactive"
+                        }`}
+                        onClick={() => toggleTreatmentStatus(treatment)}
+                        disabled={updatingTreatmentId === treatment.id}
+                      >
+                        <span className="treatmentAdminStatusDot" />
+                        {updatingTreatmentId === treatment.id
+                          ? "Sparar..."
+                          : treatment.is_active
+                            ? "Aktiv"
+                            : "Dold"}
+                      </button>
+                    </div>
+
                     <button
                       type="button"
-                      className={`treatmentAdminStatus ${
-                        treatment.is_active ? "active" : "inactive"
-                      }`}
-                      onClick={() => toggleTreatmentStatus(treatment)}
-                      disabled={updatingTreatmentId === treatment.id}
+                      className="treatmentAdminEditButton"
+                      onClick={() => openTreatmentEditor(treatment)}
                     >
-                      <span className="treatmentAdminStatusDot" />
-                      {updatingTreatmentId === treatment.id
-                        ? "Sparar..."
-                        : treatment.is_active
-                          ? "Aktiv"
-                          : "Dold"}
+                      Redigera <span>→</span>
                     </button>
                   </div>
-
-                  <button
-                    type="button"
-                    className="treatmentAdminEditButton"
-                    onClick={() => openTreatmentEditor(treatment)}
-                  >
-                    Redigera <span>→</span>
-                  </button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
         </EditModal>
       )}
