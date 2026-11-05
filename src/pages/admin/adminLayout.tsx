@@ -1,6 +1,7 @@
+
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
+
 import "./adminLayout.css";
 
 export default function AdminLayout() {
@@ -9,33 +10,42 @@ export default function AdminLayout() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
+    try {
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
 
-    if (error) {
-      console.error("Logout error:", error.message);
-      return;
+      if (!response.ok) {
+        console.error("Logout failed");
+        return;
+      }
+
+      setIsLoggingOut(true);
+      setIsLoggedIn(false);
+    } catch (error) {
+      console.error("Logout error:", error);
     }
-
-    setIsLoggingOut(true);
   };
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data } = await supabase.auth.getSession();
+      try {
+        const response = await fetch("/api/session", {
+          method: "GET",
+          credentials: "include",
+        });
 
-      setIsLoggedIn(!!data.session);
-      setIsLoading(false);
+        setIsLoggedIn(response.ok);
+      } catch (error) {
+        console.error("Session check error:", error);
+        setIsLoggedIn(false);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     checkSession();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session);
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   if (isLoading) {
@@ -46,29 +56,29 @@ export default function AdminLayout() {
     return <Navigate to={isLoggingOut ? "/" : "/admin"} replace />;
   }
 
- return (
-  <>
-    <div className="adminToolbar">
-      <div className="adminToolbarInfo">
-        <span className="adminToolbarIcon">✎</span>
+  return (
+    <>
+      <div className="adminToolbar">
+        <div className="adminToolbarInfo">
+          <span className="adminToolbarIcon">✎</span>
 
-        <div>
-          <strong>REDIGERINGSLÄGE</strong>
-          <span>Du redigerar Fotspecialistens webbplats</span>
+          <div>
+            <strong>REDIGERINGSLÄGE</strong>
+            <span>Du redigerar Fotspecialistens webbplats</span>
+          </div>
         </div>
+
+        <button
+          type="button"
+          className="adminLogoutButton"
+          onClick={handleLogout}
+        >
+          <span>Logga ut</span>
+          <span>↗</span>
+        </button>
       </div>
 
-      <button
-        type="button"
-        className="adminLogoutButton"
-        onClick={handleLogout}
-      >
-        <span>Logga ut</span>
-        <span>↗</span>
-      </button>
-    </div>
-
-    <Outlet />
-  </>
-);
+      <Outlet />
+    </>
+  );
 }

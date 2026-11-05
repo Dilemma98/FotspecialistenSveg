@@ -1,7 +1,7 @@
+
 import "./treatments.css";
 import "../../components/admin/editButton.css";
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
 import { useLocation } from "react-router-dom";
 import EditButton from "../../components/admin/editButton";
 import EditModal from "../../components/admin/editModal";
@@ -15,6 +15,7 @@ interface TreatmentContent {
   details: string[];
   is_active: boolean;
 }
+
 interface TreatmentInfo {
   note: string;
   eyebrow: string;
@@ -29,22 +30,25 @@ export default function Treatments() {
   const [info, setInfo] = useState<TreatmentInfo | null>(null);
   const location = useLocation();
   const isEditMode = location.pathname === "/admin/edit";
+
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [draftTreatment, setDraftTreatment] = useState<TreatmentContent | null>(
-    null,
-  );
-  const [updatingTreatmentId, setUpdatingTreatmentId] = useState<string | null>(
-    null,
-  );
+  const [draftTreatment, setDraftTreatment] =
+    useState<TreatmentContent | null>(null);
+  const [updatingTreatmentId, setUpdatingTreatmentId] =
+    useState<string | null>(null);
   const [draftInfo, setDraftInfo] = useState<TreatmentInfo | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const openEditor = () => {
+    setErrorMessage("");
     setIsEditorOpen(true);
   };
+
   const openInfoEditor = () => {
     if (!info) return;
 
     setDraftInfo({ ...info });
+    setErrorMessage("");
   };
 
   const openTreatmentEditor = (treatment: TreatmentContent) => {
@@ -52,134 +56,187 @@ export default function Treatments() {
       ...treatment,
       details: [...treatment.details],
     });
+    setErrorMessage("");
   };
 
   const closeEditor = () => {
     setIsEditorOpen(false);
     setDraftTreatment(null);
     setDraftInfo(null);
+    setErrorMessage("");
   };
-  const handleSave = async () => {
-    // Spara informationstexten ovanför behandlingarna
-    if (draftInfo) {
-      const { error } = await supabase
-        .from("site_content")
-        .update({
-          content: draftInfo,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("section_key", "treatments");
 
-      if (error) {
-        console.error("Kunde inte spara behandlingstexten:", error);
+  async function fetchTreatmentContent() {
+    try {
+      const response = await fetch("/api/treatments", {
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Kunde inte hämta behandlingarna.");
+      }
+
+      const data: TreatmentContent[] = await response.json();
+
+      const visibleTreatments = isEditMode
+        ? data
+        : data.filter((treatment) => treatment.is_active);
+
+      setContent(visibleTreatments);
+    } catch (error) {
+      console.error("Kunde inte hämta behandlingarna:", error);
+    }
+  }
+
+  async function fetchTreatmentInfo() {
+    try {
+      const response = await fetch("/api/site-content");
+
+      if (!response.ok) {
+        throw new Error("Kunde inte hämta behandlingstexten.");
+      }
+
+      const data = await response.json();
+
+      const treatmentData = data.find(
+        (item: { section_key: string }) =>
+          item.section_key === "treatments",
+      );
+
+      if (!treatmentData) {
+        throw new Error("Behandlingstexten hittades inte.");
+      }
+
+      const parsedContent =
+        typeof treatmentData.content === "string"
+          ? JSON.parse(treatmentData.content)
+          : treatmentData.content;
+
+      setInfo(parsedContent);
+    } catch (error) {
+      console.error("Kunde inte hämta behandlingstexten:", error);
+    }
+  }
+
+  const handleSave = async () => {
+    setErrorMessage("");
+
+    try {
+      if (draftInfo) {
+        const response = await fetch("/api/site-content", {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            section_key: "treatments",
+            content: draftInfo,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Kunde inte spara behandlingstexten.");
+        }
+
+        setInfo({ ...draftInfo });
+        setDraftInfo(null);
         return;
       }
 
-      setInfo(draftInfo);
-      setDraftInfo(null);
-      closeEditor();
-      return;
+      if (!draftTreatment) return;
+
+      const response = await fetch(
+        `/api/treatments/${encodeURIComponent(draftTreatment.id)}`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: draftTreatment.title,
+            description: draftTreatment.description,
+            label: draftTreatment.label,
+            details: draftTreatment.details.filter(
+              (detail) => detail.trim() !== "",
+            ),
+            sort_order: draftTreatment.sort_order,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Kunde inte spara behandlingen.");
+      }
+
+      await fetchTreatmentContent();
+      setDraftTreatment(null);
+    } catch (error) {
+      console.error("Kunde inte spara:", error);
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Ett fel uppstod när ändringarna skulle sparas.",
+      );
     }
-
-    // Spara en enskild behandling
-    if (!draftTreatment) return;
-
-    const { error } = await supabase
-      .from("treatments")
-      .update({
-        title: draftTreatment.title,
-        description: draftTreatment.description,
-        label: draftTreatment.label,
-        details: draftTreatment.details,
-      })
-      .eq("id", draftTreatment.id);
-
-    if (error) {
-      console.error("Kunde inte spara behandlingen:", error);
-      return;
-    }
-
-    setContent((previousContent) =>
-      previousContent.map((item) =>
-        item.id === draftTreatment.id ? draftTreatment : item,
-      ),
-    );
-
-    closeEditor();
   };
 
-  const toggleTreatmentStatus = async (treatment: TreatmentContent) => {
+  const toggleTreatmentStatus = async (
+    treatment: TreatmentContent,
+  ) => {
     const newStatus = !treatment.is_active;
 
     setUpdatingTreatmentId(treatment.id);
 
-    const { error } = await supabase
-      .from("treatments")
-      .update({ is_active: newStatus })
-      .eq("id", treatment.id);
+    try {
+      const response = await fetch(
+        `/api/treatments/${encodeURIComponent(treatment.id)}/status`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            is_active: newStatus,
+          }),
+        },
+      );
 
-    if (error) {
-      console.error("Kunde inte uppdatera behandlingsstatus:", error);
+      if (!response.ok) {
+        throw new Error("Kunde inte ändra behandlingens status.");
+      }
+
+      setContent((current) =>
+        current
+          .map((item) =>
+            item.id === treatment.id
+              ? { ...item, is_active: newStatus }
+              : item,
+          )
+          .filter((item) => isEditMode || item.is_active),
+      );
+    } catch (error) {
+      console.error("Kunde inte ändra status:", error);
+      setErrorMessage("Kunde inte ändra behandlingens status.");
+    } finally {
       setUpdatingTreatmentId(null);
-      return;
     }
-
-    setContent((previousContent) =>
-      previousContent.map((item) =>
-        item.id === treatment.id ? { ...item, is_active: newStatus } : item,
-      ),
-    );
-
-    setUpdatingTreatmentId(null);
   };
 
   useEffect(() => {
-    async function fetchTreatmentContent() {
-      let query = supabase
-        .from("treatments")
-        .select("*")
-        .order("sort_order", { ascending: true });
-
-      if (!isEditMode) {
-        query.eq("is_active", true);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error("Error fetching treatment content:", error);
-      } else {
-        setContent(data);
-      }
-    }
-
     fetchTreatmentContent();
   }, [isEditMode]);
 
   useEffect(() => {
-    async function fetchTreatmentInfo() {
-      const { data, error } = await supabase
-        .from("site_content")
-        .select("content")
-        .eq("section_key", "treatments")
-        .single();
-
-      if (error) {
-        console.error("Error fetching treatment info:", error);
-      } else {
-        setInfo(data.content);
-      }
-    }
-
     fetchTreatmentInfo();
   }, []);
-  useEffect(() => {
-    console.log("Treatment content:", info);
-  }, [info]);
 
   return (
     <section className="treatments" id="treatments">
       {isEditMode && <EditButton onClick={openEditor} />}
+
       <div className="treatmentsInner">
         {info && content.length > 0 && (
           <>
@@ -200,6 +257,7 @@ export default function Treatments() {
                 </p>
               </div>
             </div>
+
             <div className="treatmentsNote">
               <span className="noteLine" />
               <p>{info.note}</p>
@@ -207,6 +265,7 @@ export default function Treatments() {
                 Ring och boka <span>→</span>
               </a>
             </div>
+
             <div className="treatmentList">
               {content.map((treatment) => (
                 <article className="treatmentCard" key={treatment.id}>
@@ -215,7 +274,9 @@ export default function Treatments() {
                       {String(treatment.sort_order).padStart(2, "0")}
                     </span>
 
-                    <span className="treatmentLabel">{treatment.label}</span>
+                    <span className="treatmentLabel">
+                      {treatment.label}
+                    </span>
                   </div>
 
                   <div className="treatmentContent">
@@ -240,6 +301,7 @@ export default function Treatments() {
           </>
         )}
       </div>
+
       {isEditMode && (
         <EditModal
           isOpen={isEditorOpen}
@@ -253,12 +315,17 @@ export default function Treatments() {
           onClose={closeEditor}
           onSave={handleSave}
         >
+          {errorMessage && <p role="alert">{errorMessage}</p>}
+
           {draftInfo ? (
             <>
               <button
                 type="button"
                 className="treatmentAdminBackButton"
-                onClick={() => setDraftInfo(null)}
+                onClick={() => {
+                  setDraftInfo(null);
+                  setErrorMessage("");
+                }}
               >
                 ← Tillbaka till behandlingarna
               </button>
@@ -269,7 +336,10 @@ export default function Treatments() {
                   type="text"
                   value={draftInfo.eyebrow}
                   onChange={(e) =>
-                    setDraftInfo({ ...draftInfo, eyebrow: e.target.value })
+                    setDraftInfo({
+                      ...draftInfo,
+                      eyebrow: e.target.value,
+                    })
                   }
                 />
 
@@ -278,7 +348,10 @@ export default function Treatments() {
                   type="text"
                   value={draftInfo.headingStart}
                   onChange={(e) =>
-                    setDraftInfo({ ...draftInfo, headingStart: e.target.value })
+                    setDraftInfo({
+                      ...draftInfo,
+                      headingStart: e.target.value,
+                    })
                   }
                 />
 
@@ -287,7 +360,10 @@ export default function Treatments() {
                   type="text"
                   value={draftInfo.headingEnd}
                   onChange={(e) =>
-                    setDraftInfo({ ...draftInfo, headingEnd: e.target.value })
+                    setDraftInfo({
+                      ...draftInfo,
+                      headingEnd: e.target.value,
+                    })
                   }
                 />
 
@@ -295,7 +371,10 @@ export default function Treatments() {
                 <textarea
                   value={draftInfo.description}
                   onChange={(e) =>
-                    setDraftInfo({ ...draftInfo, description: e.target.value })
+                    setDraftInfo({
+                      ...draftInfo,
+                      description: e.target.value,
+                    })
                   }
                 />
 
@@ -314,7 +393,10 @@ export default function Treatments() {
                 <textarea
                   value={draftInfo.note}
                   onChange={(e) =>
-                    setDraftInfo({ ...draftInfo, note: e.target.value })
+                    setDraftInfo({
+                      ...draftInfo,
+                      note: e.target.value,
+                    })
                   }
                 />
               </div>
@@ -326,10 +408,12 @@ export default function Treatments() {
                 className="treatmentAdminBackButton"
                 onClick={() => {
                   setDraftTreatment(null);
+                  setErrorMessage("");
                 }}
               >
                 ← Tillbaka till behandlingarna
               </button>
+
               <div className="editFormGroup">
                 <label>Titel</label>
                 <input
@@ -365,6 +449,7 @@ export default function Treatments() {
                     })
                   }
                 />
+
                 <label>Detaljer</label>
 
                 <div className="treatmentDetailEditor">
@@ -374,7 +459,9 @@ export default function Treatments() {
                         type="text"
                         value={detail}
                         onChange={(e) => {
-                          const updatedDetails = [...draftTreatment.details];
+                          const updatedDetails = [
+                            ...draftTreatment.details,
+                          ];
                           updatedDetails[index] = e.target.value;
 
                           setDraftTreatment({
@@ -438,8 +525,12 @@ export default function Treatments() {
                         className={`treatmentAdminStatus ${
                           treatment.is_active ? "active" : "inactive"
                         }`}
-                        onClick={() => toggleTreatmentStatus(treatment)}
-                        disabled={updatingTreatmentId === treatment.id}
+                        onClick={() =>
+                          toggleTreatmentStatus(treatment)
+                        }
+                        disabled={
+                          updatingTreatmentId === treatment.id
+                        }
                       >
                         <span className="treatmentAdminStatusDot" />
                         {updatingTreatmentId === treatment.id

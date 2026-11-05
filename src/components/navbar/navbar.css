@@ -2,25 +2,59 @@
    NAVBAR – FOTSPECIALISTEN
    Kompakt: logga till vänster, meny till höger, en rad.
 ================================ */
-@import url('https://fonts.cdnfonts.com/css/sageffine');
-
 .siteHeader {
     position: relative;
     z-index: 10;
     width: 100%;
     box-sizing: border-box;
+
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    column-gap: 3em;
+    column-gap: 2em;
+
     padding: 0.85em 6%;
-background: linear-gradient(
-    135deg,
-    #f5f3e9 0%,
-    #e8e9dd 45%,
-    #cfd5c5 100%
-);
+
+    background: linear-gradient(
+        135deg,
+        #f5f3e9 0%,
+        #e8e9dd 45%,
+        #cfd5c5 100%
+    );
+
     border-bottom: 1px solid #deddd3;
+}
+
+/* Admin-knapp i headern */
+
+.headerAnnouncements {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-width: 0;
+    margin-left: 30vw;
+}
+
+.headerAnnouncements .openAnnouncementForm {
+    padding: 0.65rem 1rem;
+    border: 1px solid #a58b70;
+    border-radius: 5px;
+    background: transparent;
+    color: #655344;
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.headerAnnouncements .openAnnouncementForm:hover {
+    background: #78866f;
+    border-color: #78866f;
+    color: white;
 }
 
 /* BRAND */
@@ -133,6 +167,9 @@ background: linear-gradient(
     .navbar ul {
         gap: 20px;
     }
+    .headerAnnouncements{
+        margin-left: 3vw;
+    }
 }
 
 /* ==============================
@@ -146,6 +183,13 @@ background: linear-gradient(
         row-gap: 4px;
         padding: 12px 20px 6px;
     }
+    .headerAnnouncements {
+    grid-row: 2;
+}
+
+.navbar {
+    grid-row: 3;
+}
 
     .brand {
         justify-content: center;

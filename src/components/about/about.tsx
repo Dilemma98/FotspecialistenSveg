@@ -1,7 +1,6 @@
 import "./about.css";
 import "../../components/admin/editButton.css";
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
 import { useLocation } from "react-router-dom";
 import EditButton from "../../components/admin/editButton";
 import EditModal from "../../components/admin/editModal";
@@ -42,40 +41,67 @@ export default function About() {
     setDraftContent(null);
   };
 
-  const handleSave = async () => {
-    if (!draftContent) return;
 
-    const { error } = await supabase
-      .from("site_content")
-      .update({
+const handleSave = async () => {
+  if (!draftContent) return;
+
+  try {
+    const response = await fetch("/api/site-content", {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        section_key: "about",
         content: draftContent,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("section_key", "about");
+      }),
+    });
 
-    if (error) {
-      console.error("Kunde inte spara About:", error);
-      return;
+    if (!response.ok) {
+      throw new Error("Kunde inte spara Om oss-innehållet.");
     }
 
     setContent(draftContent);
     closeEditor();
-  };
+  } catch (error) {
+    console.error("Kunde inte spara About:", error);
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Ett fel uppstod när innehållet skulle sparas.",
+    );
+  }
+};
+
 
   useEffect(() => {
     async function fetchAboutContent() {
-      const { data, error } = await supabase
-        .from("site_content")
-        .select("content")
-        .eq("section_key", "about")
-        .single();
+      try {
+        const response = await fetch("/api/site-content");
 
-      if (error) {
+        if (!response.ok) {
+          throw new Error("Kunde inte hämta innehållet.");
+        }
+
+        const data = await response.json();
+
+        const aboutData = data.find(
+          (item: { section_key: string }) => item.section_key === "about",
+        );
+
+        if (!aboutData) {
+          throw new Error("About-innehållet hittades inte.");
+        }
+
+        setContent(
+          typeof aboutData.content === "string"
+            ? JSON.parse(aboutData.content)
+            : aboutData.content,
+        );
+      } catch (error) {
         console.error("Kunde inte hämta About:", error);
-        return;
       }
-
-      setContent(data.content);
     }
 
     fetchAboutContent();

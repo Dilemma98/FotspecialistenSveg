@@ -1,4 +1,5 @@
 import "./navbar.css";
+import Announcements from "../../components/admin/announcements";
 
 export default function Navbar() {
     return (
@@ -17,6 +18,10 @@ export default function Navbar() {
                     MEDICINSK FOTVÅRD
                 </span>
             </div>
+
+               <div className="headerAnnouncements">
+        <Announcements />
+    </div>
 
             <nav className="navbar">
                 <ul>
