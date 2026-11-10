@@ -165,12 +165,6 @@ export default function About() {
                   className="aboutImage"
                 />
 
-                {/* {isEditMode && (
-                  <div className="aboutImageEdit">
-                    <EditButton onClick={() => openEditor("image")} />
-                  </div>
-                )} */}
-
                 <div className="aboutImageCaption">
                   <div className="aboutEditable">
                     <div className="aboutCaptionText">
