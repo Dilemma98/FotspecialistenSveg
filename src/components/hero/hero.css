@@ -140,6 +140,33 @@
     gap: 18px;
 }
 
+/* EDIT BUTTONS */
+
+.heroEditable {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.heroEditable .editButton {
+    flex-shrink: 0;
+    position: relative;
+    margin-left: 18px;
+}
+
+.heroEditable .editButton::before {
+    content: "";
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 30px;
+    height: 1px;
+    background-color: #9a8065;
+    transform: translateY(-50%);
+}
+
 /* NOTE */
 
 .heroNote {
@@ -176,7 +203,7 @@
     height: 490px;
     overflow: hidden;
     background: #e6e2d7;
-     border-radius: 1em;
+    border-radius: 1em;
 }
 
 .heroImage img {
@@ -186,7 +213,6 @@
     object-fit: cover;
     object-position: center;
     transition: transform 0.8s ease;
-    
 }
 
 .heroVisual:hover .heroImage img {
@@ -209,7 +235,6 @@
 }
 
 /* DECORATIVE DETAIL */
-
 
 .heroDecoration {
     position: absolute;
@@ -236,7 +261,6 @@
     object-fit: cover;
     object-position: center -2%;
 }
-
 
 /* ==============================
    TABLET

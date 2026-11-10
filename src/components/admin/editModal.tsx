@@ -1,4 +1,3 @@
-
 import { useRef, useState } from "react";
 import type { ReactNode } from "react";
 import "./editModal.css";
@@ -20,35 +19,35 @@ export default function EditModal({
   onSave,
   isSaving = false,
 }: EditModalProps) {
-    const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
-const dragOffset = useRef({ x: 0, y: 0 });
-const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-  // Don't drag when clicking the close button
-  if ((e.target as HTMLElement).closest("button")) return;
+  const dragOffset = useRef({ x: 0, y: 0 });
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    // Don't drag when clicking the close button
+    if ((e.target as HTMLElement).closest("button")) return;
 
-  dragOffset.current = {
-    x: e.clientX - position.x,
-    y: e.clientY - position.y,
+    dragOffset.current = {
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
+    };
+
+    e.currentTarget.setPointerCapture(e.pointerId);
   };
 
-  e.currentTarget.setPointerCapture(e.pointerId);
-};
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
 
-const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-  if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+    setPosition({
+      x: e.clientX - dragOffset.current.x,
+      y: e.clientY - dragOffset.current.y,
+    });
+  };
 
-  setPosition({
-    x: e.clientX - dragOffset.current.x,
-    y: e.clientY - dragOffset.current.y,
-  });
-};
-
-const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-  if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-    e.currentTarget.releasePointerCapture(e.pointerId);
-  }
-};
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,22 +59,20 @@ const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
   return (
     <div className="editModalOverlay">
       <div
-  className="editModal"
-  style={{
-    transform: `translate(${position.x}px, ${position.y}px)`,
-  }}
->
+        className="editModal"
+        style={{
+          transform: `translate(${position.x}px, ${position.y}px)`,
+        }}
+      >
         <div
-  className="editModalHeader"
-  onPointerDown={handlePointerDown}
-  onPointerMove={handlePointerMove}
-  onPointerUp={handlePointerUp}
-  onPointerCancel={handlePointerUp}
->
+          className="editModalHeader"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+        >
           <div>
-            <span className="editModalEyebrow">
-              FOTSPECIALISTEN
-            </span>
+            <span className="editModalEyebrow">FOTSPECIALISTEN</span>
             <h2>{title}</h2>
           </div>
 
@@ -90,9 +87,7 @@ const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="editModalBody">
-            {children}
-          </div>
+          <div className="editModalBody">{children}</div>
 
           <div className="editModalFooter">
             <button
@@ -104,11 +99,7 @@ const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
               Avbryt
             </button>
 
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="editModalSave"
-            >
+            <button type="submit" disabled={isSaving} className="editModalSave">
               {isSaving ? "Sparar..." : "Spara ändringar"}
             </button>
           </div>

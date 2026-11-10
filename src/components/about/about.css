@@ -118,6 +118,7 @@
     line-height: 1.9;
     color: #73766b;
     margin: 0 0 15px;
+    white-space: pre-line;
 }
 
 .aboutSignature {
@@ -183,6 +184,153 @@
     flex: 1;
     background: #d9d8ce;
 }
+
+
+/* ==============================
+   ABOUT – ADMIN EDIT BUTTONS
+================================ */
+
+.aboutEditable {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.aboutEditable .editButton {
+    flex-shrink: 0;
+    position: relative;
+    margin-left: 18px;
+}
+
+.aboutEditable .editButton::before {
+    content: "";
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 30px;
+    height: 1px;
+    background-color: #9a8065;
+    transform: translateY(-50%);
+}
+
+/* Keep text layout intact */
+
+.aboutContent > .aboutEditable {
+    width: fit-content;
+}
+
+.aboutContent .aboutEditable h2 {
+    margin: 0;
+}
+
+.aboutContent .aboutEditable .aboutEyebrow {
+    margin-bottom: 20px;
+}
+
+.aboutContent .aboutEditable .aboutLead,
+.aboutContent .aboutEditable .aboutText {
+    margin-top: 0;
+}
+
+/* Image edit button */
+
+.aboutImageEdit {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 3;
+}
+
+/* Image caption edit buttons */
+
+.aboutImageCaption .aboutEditable {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.aboutImageCaption .aboutEditable .editButton {
+    margin-left: 18px;
+}
+
+.aboutImageCaption .aboutEditable:first-child span {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.4rem;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+}
+
+.aboutImageCaption .aboutEditable:last-child span {
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    color: #dfdfdf;
+}
+
+/* EDITABLE CONTENT */
+
+.aboutEditable {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.aboutEditable .editButton {
+    flex-shrink: 0;
+    position: relative;
+    margin-left: 18px;
+}
+
+.aboutEditable .editButton::before {
+    content: "";
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 30px;
+    height: 1px;
+    background-color: #9a8065;
+    transform: translateY(-50%);
+}
+
+/* IMAGE CAPTION */
+
+.aboutCaptionText {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* PARAGRAPHS */
+
+.aboutParagraphsEditable {
+    align-items: flex-start;
+    width: 100%;
+}
+
+.aboutParagraphsEditable > div {
+    flex: 1;
+    min-width: 0;
+}
+
+.aboutParagraphsEditable .editButton {
+    margin-top: 5px;
+}
+/* Mobile */
+
+@media (max-width: 700px) {
+    .aboutEditable {
+        max-width: 100%;
+    }
+
+    .aboutContent .aboutEditable {
+        width: 100%;
+    }
+}
+
 
 /* Stora skärmar: fast bildkolumn, resten går till texten */
 

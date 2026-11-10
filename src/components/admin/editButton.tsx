@@ -1,7 +1,18 @@
-export default function EditButton({ onClick }: { onClick: () => void }) {
+
+interface EditButtonProps {
+  onClick: () => void;
+}
+
+export default function EditButton({ onClick }: EditButtonProps) {
   return (
-    <button type="button" className="editButton" onClick={onClick}>
-      ✎ Redigera avsnitt
+    <button
+      type="button"
+      className="editButton"
+      onClick={onClick}
+      aria-label="Redigera innehåll"
+      title="Redigera innehåll"
+    >
+      ✎
     </button>
   );
 }

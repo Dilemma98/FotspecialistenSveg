@@ -1,4 +1,3 @@
-
 import "./treatments.css";
 import "../../components/admin/editButton.css";
 import { useEffect, useState } from "react";
@@ -25,30 +24,40 @@ interface TreatmentInfo {
   cancellationPolicy: string;
 }
 
+type TreatmentInfoField =
+  | "eyebrow"
+  | "heading"
+  | "description"
+  | "policy"
+  | "note";
+
 export default function Treatments() {
   const [content, setContent] = useState<TreatmentContent[]>([]);
   const [info, setInfo] = useState<TreatmentInfo | null>(null);
+
   const location = useLocation();
   const isEditMode = location.pathname === "/admin/edit";
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [draftTreatment, setDraftTreatment] =
-    useState<TreatmentContent | null>(null);
-  const [updatingTreatmentId, setUpdatingTreatmentId] =
-    useState<string | null>(null);
+  const [draftTreatment, setDraftTreatment] = useState<TreatmentContent | null>(
+    null,
+  );
+  const [updatingTreatmentId, setUpdatingTreatmentId] = useState<string | null>(
+    null,
+  );
   const [draftInfo, setDraftInfo] = useState<TreatmentInfo | null>(null);
+  const [activeInfoField, setActiveInfoField] =
+    useState<TreatmentInfoField | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const openEditor = () => {
-    setErrorMessage("");
-    setIsEditorOpen(true);
-  };
-
-  const openInfoEditor = () => {
+  const openInfoEditor = (field: TreatmentInfoField) => {
     if (!info) return;
 
     setDraftInfo({ ...info });
+    setDraftTreatment(null);
+    setActiveInfoField(field);
     setErrorMessage("");
+    setIsEditorOpen(true);
   };
 
   const openTreatmentEditor = (treatment: TreatmentContent) => {
@@ -56,13 +65,17 @@ export default function Treatments() {
       ...treatment,
       details: [...treatment.details],
     });
+    setDraftInfo(null);
+    setActiveInfoField(null);
     setErrorMessage("");
+    setIsEditorOpen(true);
   };
 
   const closeEditor = () => {
     setIsEditorOpen(false);
     setDraftTreatment(null);
     setDraftInfo(null);
+    setActiveInfoField(null);
     setErrorMessage("");
   };
 
@@ -99,8 +112,7 @@ export default function Treatments() {
       const data = await response.json();
 
       const treatmentData = data.find(
-        (item: { section_key: string }) =>
-          item.section_key === "treatments",
+        (item: { section_key: string }) => item.section_key === "treatments",
       );
 
       if (!treatmentData) {
@@ -140,7 +152,7 @@ export default function Treatments() {
         }
 
         setInfo({ ...draftInfo });
-        setDraftInfo(null);
+        closeEditor();
         return;
       }
 
@@ -171,7 +183,7 @@ export default function Treatments() {
       }
 
       await fetchTreatmentContent();
-      setDraftTreatment(null);
+      closeEditor();
     } catch (error) {
       console.error("Kunde inte spara:", error);
       setErrorMessage(
@@ -182,9 +194,7 @@ export default function Treatments() {
     }
   };
 
-  const toggleTreatmentStatus = async (
-    treatment: TreatmentContent,
-  ) => {
+  const toggleTreatmentStatus = async (treatment: TreatmentContent) => {
     const newStatus = !treatment.is_active;
 
     setUpdatingTreatmentId(treatment.id);
@@ -211,9 +221,7 @@ export default function Treatments() {
       setContent((current) =>
         current
           .map((item) =>
-            item.id === treatment.id
-              ? { ...item, is_active: newStatus }
-              : item,
+            item.id === treatment.id ? { ...item, is_active: newStatus } : item,
           )
           .filter((item) => isEditMode || item.is_active),
       );
@@ -235,49 +243,114 @@ export default function Treatments() {
 
   return (
     <section className="treatments" id="treatments">
-      {isEditMode && <EditButton onClick={openEditor} />}
-
       <div className="treatmentsInner">
         {info && content.length > 0 && (
           <>
+            {/* HEADER */}
             <div className="treatmentsHeader">
               <div className="treatmentsIntro">
-                <span className="sectionEyebrow">{info.eyebrow}</span>
+                {/* EYEBROW */}
+                <div className="treatmentsEditable">
+                  <span className="sectionEyebrow">{info.eyebrow}</span>
 
-                <h2>
-                  {info.headingStart} <br />
-                  <span>{info.headingEnd}.</span>
-                </h2>
+                  {isEditMode && (
+                    <EditButton onClick={() => openInfoEditor("eyebrow")} />
+                  )}
+                </div>
+
+                {/* HEADING */}
+                <div className="treatmentsEditable">
+                  <h2>
+                    {info.headingStart} <br />
+                    <span>{info.headingEnd}.</span>
+                  </h2>
+
+                  {isEditMode && (
+                    <EditButton onClick={() => openInfoEditor("heading")} />
+                  )}
+                </div>
               </div>
 
               <div className="treatmentsLead">
-                <p>{info.description}</p>
-                <p className="treatmentsPolicy">
-                  <b>{info.cancellationPolicy}</b>
-                </p>
+                {/* DESCRIPTION */}
+                <div className="treatmentsEditable">
+                  <p>{info.description}</p>
+
+                  {isEditMode && (
+                    <EditButton onClick={() => openInfoEditor("description")} />
+                  )}
+                </div>
+
+                {/* CANCELLATION POLICY */}
+                <div className="treatmentsEditable">
+                  <p className="treatmentsPolicy">
+                    <b>{info.cancellationPolicy}</b>
+                  </p>
+
+                  {isEditMode && (
+                    <EditButton onClick={() => openInfoEditor("policy")} />
+                  )}
+                </div>
               </div>
             </div>
 
+            {/* NOTE */}
             <div className="treatmentsNote">
               <span className="noteLine" />
-              <p>{info.note}</p>
+
+              <div className="treatmentsEditable">
+                <p>{info.note}</p>
+
+                {isEditMode && (
+                  <EditButton onClick={() => openInfoEditor("note")} />
+                )}
+              </div>
+
               <a href="tel:+4668010733">
                 Ring och boka <span>→</span>
               </a>
             </div>
 
+            {/* TREATMENT CARDS */}
             <div className="treatmentList">
               {content.map((treatment) => (
                 <article className="treatmentCard" key={treatment.id}>
-                  <div className="treatmentTop">
-                    <span className="treatmentNumber">
-                      {String(treatment.sort_order).padStart(2, "0")}
-                    </span>
+                  {isEditMode && (
+                    <div className="treatmentCardEdit">
+                      <EditButton
+                        onClick={() => openTreatmentEditor(treatment)}
+                      />
+                    </div>
+                  )}
 
-                    <span className="treatmentLabel">
-                      {treatment.label}
-                    </span>
-                  </div>
+<div className="treatmentTop">
+    <span className="treatmentNumber">
+        {String(treatment.sort_order).padStart(2, "0")}
+    </span>
+
+    <span className="treatmentLabel">
+        {treatment.label}
+    </span>
+
+    {isEditMode && (
+        <button
+            type="button"
+            className={`treatmentAdminStatus ${
+                treatment.is_active ? "active" : "inactive"
+            }`}
+            onClick={() => toggleTreatmentStatus(treatment)}
+            disabled={updatingTreatmentId === treatment.id}
+        >
+            <span className="treatmentAdminStatusDot" />
+
+            {updatingTreatmentId === treatment.id
+                ? "Sparar..."
+                : treatment.is_active
+                    ? "Aktiv"
+                    : "Dold"}
+        </button>
+    )}
+</div>
 
                   <div className="treatmentContent">
                     <h3>{treatment.title}</h3>
@@ -302,256 +375,208 @@ export default function Treatments() {
         )}
       </div>
 
+      {/* EDIT MODAL */}
       {isEditMode && (
         <EditModal
           isOpen={isEditorOpen}
           title={
             draftInfo
-              ? "Redigera behandlingstext"
-              : draftTreatment
-                ? "Redigera behandling"
-                : "Hantera behandlingar"
+              ? activeInfoField === "eyebrow"
+                ? "Redigera introduktion"
+                : activeInfoField === "heading"
+                  ? "Redigera rubrik"
+                  : activeInfoField === "description"
+                    ? "Redigera beskrivning"
+                    : activeInfoField === "policy"
+                      ? "Redigera avbokningspolicy"
+                      : "Redigera notis"
+              : "Redigera behandling"
           }
           onClose={closeEditor}
           onSave={handleSave}
         >
           {errorMessage && <p role="alert">{errorMessage}</p>}
 
-          {draftInfo ? (
-            <>
-              <button
-                type="button"
-                className="treatmentAdminBackButton"
-                onClick={() => {
-                  setDraftInfo(null);
-                  setErrorMessage("");
-                }}
-              >
-                ← Tillbaka till behandlingarna
-              </button>
+          {/* INFO FIELDS */}
+          {draftInfo && activeInfoField === "eyebrow" && (
+            <div className="editFormGroup">
+              <label>Introduktion</label>
+              <input
+                type="text"
+                value={draftInfo.eyebrow}
+                onChange={(e) =>
+                  setDraftInfo({
+                    ...draftInfo,
+                    eyebrow: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
 
-              <div className="editFormGroup">
-                <label>Introduktion</label>
-                <input
-                  type="text"
-                  value={draftInfo.eyebrow}
-                  onChange={(e) =>
-                    setDraftInfo({
-                      ...draftInfo,
-                      eyebrow: e.target.value,
-                    })
-                  }
-                />
+          {draftInfo && activeInfoField === "heading" && (
+            <div className="editFormGroup">
+              <label>Rubrik – första delen</label>
+              <input
+                type="text"
+                value={draftInfo.headingStart}
+                onChange={(e) =>
+                  setDraftInfo({
+                    ...draftInfo,
+                    headingStart: e.target.value,
+                  })
+                }
+              />
 
-                <label>Rubrik – första delen</label>
-                <input
-                  type="text"
-                  value={draftInfo.headingStart}
-                  onChange={(e) =>
-                    setDraftInfo({
-                      ...draftInfo,
-                      headingStart: e.target.value,
-                    })
-                  }
-                />
+              <label>Rubrik – andra delen</label>
+              <input
+                type="text"
+                value={draftInfo.headingEnd}
+                onChange={(e) =>
+                  setDraftInfo({
+                    ...draftInfo,
+                    headingEnd: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
 
-                <label>Rubrik – andra delen</label>
-                <input
-                  type="text"
-                  value={draftInfo.headingEnd}
-                  onChange={(e) =>
-                    setDraftInfo({
-                      ...draftInfo,
-                      headingEnd: e.target.value,
-                    })
-                  }
-                />
+          {draftInfo && activeInfoField === "description" && (
+            <div className="editFormGroup">
+              <label>Beskrivning</label>
+              <textarea
+                value={draftInfo.description}
+                onChange={(e) =>
+                  setDraftInfo({
+                    ...draftInfo,
+                    description: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
 
-                <label>Beskrivning</label>
-                <textarea
-                  value={draftInfo.description}
-                  onChange={(e) =>
-                    setDraftInfo({
-                      ...draftInfo,
-                      description: e.target.value,
-                    })
-                  }
-                />
+          {draftInfo && activeInfoField === "policy" && (
+            <div className="editFormGroup">
+              <label>Avbokningspolicy</label>
+              <textarea
+                value={draftInfo.cancellationPolicy}
+                onChange={(e) =>
+                  setDraftInfo({
+                    ...draftInfo,
+                    cancellationPolicy: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
 
-                <label>Avbokningspolicy</label>
-                <textarea
-                  value={draftInfo.cancellationPolicy}
-                  onChange={(e) =>
-                    setDraftInfo({
-                      ...draftInfo,
-                      cancellationPolicy: e.target.value,
-                    })
-                  }
-                />
+          {draftInfo && activeInfoField === "note" && (
+            <div className="editFormGroup">
+              <label>Notis ovanför behandlingarna</label>
+              <textarea
+                value={draftInfo.note}
+                onChange={(e) =>
+                  setDraftInfo({
+                    ...draftInfo,
+                    note: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
 
-                <label>Notis ovanför behandlingarna</label>
-                <textarea
-                  value={draftInfo.note}
-                  onChange={(e) =>
-                    setDraftInfo({
-                      ...draftInfo,
-                      note: e.target.value,
-                    })
-                  }
-                />
-              </div>
-            </>
-          ) : draftTreatment ? (
-            <>
-              <button
-                type="button"
-                className="treatmentAdminBackButton"
-                onClick={() => {
-                  setDraftTreatment(null);
-                  setErrorMessage("");
-                }}
-              >
-                ← Tillbaka till behandlingarna
-              </button>
+          {/* TREATMENT FIELDS */}
+          {draftTreatment && (
+            <div className="editFormGroup">
+              <label>Titel</label>
+              <input
+                type="text"
+                value={draftTreatment.title}
+                onChange={(e) =>
+                  setDraftTreatment({
+                    ...draftTreatment,
+                    title: e.target.value,
+                  })
+                }
+              />
 
-              <div className="editFormGroup">
-                <label>Titel</label>
-                <input
-                  type="text"
-                  value={draftTreatment.title}
-                  onChange={(e) =>
-                    setDraftTreatment({
-                      ...draftTreatment,
-                      title: e.target.value,
-                    })
-                  }
-                />
+              <label>Beskrivning</label>
+              <textarea
+                value={draftTreatment.description}
+                onChange={(e) =>
+                  setDraftTreatment({
+                    ...draftTreatment,
+                    description: e.target.value,
+                  })
+                }
+              />
 
-                <label>Beskrivning</label>
-                <textarea
-                  value={draftTreatment.description}
-                  onChange={(e) =>
-                    setDraftTreatment({
-                      ...draftTreatment,
-                      description: e.target.value,
-                    })
-                  }
-                />
+              <label>Etikett</label>
+              <input
+                type="text"
+                value={draftTreatment.label ?? ""}
+                onChange={(e) =>
+                  setDraftTreatment({
+                    ...draftTreatment,
+                    label: e.target.value || null,
+                  })
+                }
+              />
 
-                <label>Etikett</label>
-                <input
-                  type="text"
-                  value={draftTreatment.label ?? ""}
-                  onChange={(e) =>
-                    setDraftTreatment({
-                      ...draftTreatment,
-                      label: e.target.value || null,
-                    })
-                  }
-                />
+              <label>Detaljer</label>
 
-                <label>Detaljer</label>
+              <div className="treatmentDetailEditor">
+                {draftTreatment.details.map((detail, index) => (
+                  <div className="treatmentDetailInput" key={index}>
+                    <input
+                      type="text"
+                      value={detail}
+                      onChange={(e) => {
+                        const updatedDetails = [...draftTreatment.details];
 
-                <div className="treatmentDetailEditor">
-                  {draftTreatment.details.map((detail, index) => (
-                    <div className="treatmentDetailInput" key={index}>
-                      <input
-                        type="text"
-                        value={detail}
-                        onChange={(e) => {
-                          const updatedDetails = [
-                            ...draftTreatment.details,
-                          ];
-                          updatedDetails[index] = e.target.value;
+                        updatedDetails[index] = e.target.value;
 
-                          setDraftTreatment({
-                            ...draftTreatment,
-                            details: updatedDetails,
-                          });
-                        }}
-                      />
-
-                      <button
-                        type="button"
-                        className="treatmentDetailRemove"
-                        onClick={() => {
-                          setDraftTreatment({
-                            ...draftTreatment,
-                            details: draftTreatment.details.filter(
-                              (_, i) => i !== index,
-                            ),
-                          });
-                        }}
-                        aria-label="Ta bort detalj"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  className="treatmentDetailAdd"
-                  onClick={() => {
-                    setDraftTreatment({
-                      ...draftTreatment,
-                      details: [...draftTreatment.details, ""],
-                    });
-                  }}
-                >
-                  + Lägg till detalj
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                className="treatmentAdminEditButton"
-                onClick={openInfoEditor}
-              >
-                Redigera texten ovanför behandlingarna →
-              </button>
-
-              <div className="treatmentAdminList">
-                {content.map((treatment) => (
-                  <div key={treatment.id} className="treatmentAdminItem">
-                    <div>
-                      <h3>{treatment.title}</h3>
-
-                      <button
-                        type="button"
-                        className={`treatmentAdminStatus ${
-                          treatment.is_active ? "active" : "inactive"
-                        }`}
-                        onClick={() =>
-                          toggleTreatmentStatus(treatment)
-                        }
-                        disabled={
-                          updatingTreatmentId === treatment.id
-                        }
-                      >
-                        <span className="treatmentAdminStatusDot" />
-                        {updatingTreatmentId === treatment.id
-                          ? "Sparar..."
-                          : treatment.is_active
-                            ? "Aktiv"
-                            : "Dold"}
-                      </button>
-                    </div>
+                        setDraftTreatment({
+                          ...draftTreatment,
+                          details: updatedDetails,
+                        });
+                      }}
+                    />
 
                     <button
                       type="button"
-                      className="treatmentAdminEditButton"
-                      onClick={() => openTreatmentEditor(treatment)}
+                      className="treatmentDetailRemove"
+                      onClick={() => {
+                        setDraftTreatment({
+                          ...draftTreatment,
+                          details: draftTreatment.details.filter(
+                            (_, i) => i !== index,
+                          ),
+                        });
+                      }}
+                      aria-label="Ta bort detalj"
                     >
-                      Redigera <span>→</span>
+                      ×
                     </button>
                   </div>
                 ))}
               </div>
-            </>
+
+              <button
+                type="button"
+                className="treatmentDetailAdd"
+                onClick={() => {
+                  setDraftTreatment({
+                    ...draftTreatment,
+                    details: [...draftTreatment.details, ""],
+                  });
+                }}
+              >
+                + Lägg till detalj
+              </button>
+            </div>
           )}
         </EditModal>
       )}

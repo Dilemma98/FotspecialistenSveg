@@ -21,19 +21,31 @@ interface HeroContent {
   secondaryButton: string;
 }
 
+type HeroEditField =
+  | "eyebrow"
+  | "title"
+  | "description"
+  | "buttons"
+  | "note"
+  | "slides";
+
 const AUTOPLAY_MS = 4000;
 
 export default function Hero() {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [content, setContent] = useState<HeroContent | null>(null);
+
   const slides = content?.slides ?? [];
+
   const location = useLocation();
   const isEditMode = location.pathname === "/admin/edit";
+
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [draftContent, setDraftContent] = useState<HeroContent | null>(null);
+  const [activeEditor, setActiveEditor] = useState<HeroEditField | null>(null);
 
-  const openEditor = () => {
+  const openEditor = (field: HeroEditField) => {
     if (!content) return;
 
     setDraftContent({
@@ -41,12 +53,14 @@ export default function Hero() {
       slides: content.slides.map((slide) => ({ ...slide })),
     });
 
+    setActiveEditor(field);
     setIsEditorOpen(true);
   };
 
   const closeEditor = () => {
     setIsEditorOpen(false);
     setDraftContent(null);
+    setActiveEditor(null);
   };
 
   const handleSave = async () => {
@@ -133,47 +147,79 @@ export default function Hero() {
     if (paused || reduceMotion || slides.length <= 1) return;
 
     const id = window.setInterval(next, AUTOPLAY_MS);
+
     return () => window.clearInterval(id);
   }, [paused, current, next, slides.length]);
 
   return (
     <>
       <section className="hero" id="home">
-        {isEditMode && <EditButton onClick={openEditor} />}
         {content && (
           <>
             <div className="heroContent">
-              <span className="heroEyebrow">{content.eyebrow}</span>
+              {/* EYEBROW */}
+              <div className="heroEditable">
+                <span className="heroEyebrow">{content.eyebrow}</span>
 
-              <h1>
-                {content.title}{" "}
-                <span>
-                  {content.titleAccent}
-                  {""}
-                </span>
-                {content.titleEnding}
-              </h1>
-
-              <p className="heroDescription">{content.description}</p>
-
-              <div className="heroActions">
-                <a href="tel:+4668010733" className="heroPrimaryButton">
-                  {content.primaryButton}
-                  <span>↗</span>
-                </a>
-
-                <a href="#treatments" className="heroSecondaryButton">
-                  {content.secondaryButton}
-                  <span>→</span>
-                </a>
+                {isEditMode && (
+                  <EditButton onClick={() => openEditor("eyebrow")} />
+                )}
               </div>
 
-              <div className="heroNote">
-                <span className="heroNoteLine" />
-                <span>{content.note}</span>
+              {/* TITLE */}
+              <div className="heroEditable">
+                <h1>
+                  {content.title} <span>{content.titleAccent}</span>
+                  {content.titleEnding}
+                </h1>
+
+                {isEditMode && (
+                  <EditButton onClick={() => openEditor("title")} />
+                )}
+              </div>
+
+              {/* DESCRIPTION */}
+              <div className="heroEditable">
+                <p className="heroDescription">{content.description}</p>
+
+                {isEditMode && (
+                  <EditButton onClick={() => openEditor("description")} />
+                )}
+              </div>
+
+              {/* BUTTONS */}
+              <div className="heroEditable">
+                <div className="heroActions">
+                  <a href="tel:+4668010733" className="heroPrimaryButton">
+                    {content.primaryButton}
+                    <span>↗</span>
+                  </a>
+
+                  <a href="#treatments" className="heroSecondaryButton">
+                    {content.secondaryButton}
+                    <span>→</span>
+                  </a>
+                </div>
+
+                {isEditMode && (
+                  <EditButton onClick={() => openEditor("buttons")} />
+                )}
+              </div>
+
+              {/* NOTE */}
+              <div className="heroEditable">
+                <div className="heroNote">
+                  <span className="heroNoteLine" />
+                  <span>{content.note}</span>
+                </div>
+
+                {isEditMode && (
+                  <EditButton onClick={() => openEditor("note")} />
+                )}
               </div>
             </div>
 
+            {/* IMAGE SLIDESHOW */}
             <div className="heroVisual">
               <div
                 className="heroImage"
@@ -223,86 +269,172 @@ export default function Hero() {
           </>
         )}
       </section>
-      {draftContent && (
+
+      {/* EDIT MODAL */}
+      {draftContent && activeEditor && (
         <EditModal
           isOpen={isEditorOpen}
-          title="Redigera startsidan"
+          title={
+            activeEditor === "eyebrow"
+              ? "Redigera liten text"
+              : activeEditor === "title"
+                ? "Redigera rubrik"
+                : activeEditor === "description"
+                  ? "Redigera beskrivning"
+                  : activeEditor === "buttons"
+                    ? "Redigera knappar"
+                    : activeEditor === "note"
+                      ? "Redigera notis"
+                      : "Redigera bildspel"
+          }
           onClose={closeEditor}
           onSave={handleSave}
         >
-          <div className="editFormGroup">
-            <label htmlFor="hero-eyebrow">Liten text ovanför rubriken</label>
-            <input
-              id="hero-eyebrow"
-              type="text"
-              value={draftContent.eyebrow}
-              onChange={(e) =>
-                setDraftContent({
-                  ...draftContent,
-                  eyebrow: e.target.value,
-                })
-              }
-            />
-          </div>
+          {/* EYEBROW */}
+          {activeEditor === "eyebrow" && (
+            <div className="editFormGroup">
+              <label htmlFor="hero-eyebrow">Liten text ovanför rubriken</label>
 
-          <div className="editFormGroup">
-            <label htmlFor="hero-title">Rubrik</label>
-            <input
-              id="hero-title"
-              type="text"
-              value={draftContent.title}
-              onChange={(e) =>
-                setDraftContent({
-                  ...draftContent,
-                  title: e.target.value,
-                })
-              }
-            />
-          </div>
+              <input
+                id="hero-eyebrow"
+                type="text"
+                value={draftContent.eyebrow}
+                onChange={(e) =>
+                  setDraftContent({
+                    ...draftContent,
+                    eyebrow: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
 
-          <div className="editFormGroup">
-            <label htmlFor="hero-title-accent">Rubrikens färgade del</label>
-            <input
-              id="hero-title-accent"
-              type="text"
-              value={draftContent.titleAccent}
-              onChange={(e) =>
-                setDraftContent({
-                  ...draftContent,
-                  titleAccent: e.target.value,
-                })
-              }
-            />
-          </div>
+          {/* TITLE */}
+          {activeEditor === "title" && (
+            <>
+              <div className="editFormGroup">
+                <label htmlFor="hero-title">Rubrik</label>
 
-          <div className="editFormGroup">
-            <label htmlFor="hero-title-ending">Text efter rubriken</label>
-            <input
-              id="hero-title-ending"
-              type="text"
-              value={draftContent.titleEnding}
-              onChange={(e) =>
-                setDraftContent({
-                  ...draftContent,
-                  titleEnding: e.target.value,
-                })
-              }
-            />
-          </div>
+                <input
+                  id="hero-title"
+                  type="text"
+                  value={draftContent.title}
+                  onChange={(e) =>
+                    setDraftContent({
+                      ...draftContent,
+                      title: e.target.value,
+                    })
+                  }
+                />
+              </div>
 
-          <div className="editFormGroup">
-            <label htmlFor="hero-description">Beskrivning</label>
-            <textarea
-              id="hero-description"
-              value={draftContent.description}
-              onChange={(e) =>
-                setDraftContent({
-                  ...draftContent,
-                  description: e.target.value,
-                })
-              }
-            />
-          </div>
+              <div className="editFormGroup">
+                <label htmlFor="hero-title-accent">Rubrikens färgade del</label>
+
+                <input
+                  id="hero-title-accent"
+                  type="text"
+                  value={draftContent.titleAccent}
+                  onChange={(e) =>
+                    setDraftContent({
+                      ...draftContent,
+                      titleAccent: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="editFormGroup">
+                <label htmlFor="hero-title-ending">Text efter rubriken</label>
+
+                <input
+                  id="hero-title-ending"
+                  type="text"
+                  value={draftContent.titleEnding}
+                  onChange={(e) =>
+                    setDraftContent({
+                      ...draftContent,
+                      titleEnding: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </>
+          )}
+
+          {/* DESCRIPTION */}
+          {activeEditor === "description" && (
+            <div className="editFormGroup">
+              <label htmlFor="hero-description">Beskrivning</label>
+
+              <textarea
+                id="hero-description"
+                value={draftContent.description}
+                onChange={(e) =>
+                  setDraftContent({
+                    ...draftContent,
+                    description: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
+
+          {/* BUTTONS */}
+          {activeEditor === "buttons" && (
+            <>
+              <div className="editFormGroup">
+                <label htmlFor="hero-primary-button">Primär knapp</label>
+
+                <input
+                  id="hero-primary-button"
+                  type="text"
+                  value={draftContent.primaryButton}
+                  onChange={(e) =>
+                    setDraftContent({
+                      ...draftContent,
+                      primaryButton: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="editFormGroup">
+                <label htmlFor="hero-secondary-button">Sekundär knapp</label>
+
+                <input
+                  id="hero-secondary-button"
+                  type="text"
+                  value={draftContent.secondaryButton}
+                  onChange={(e) =>
+                    setDraftContent({
+                      ...draftContent,
+                      secondaryButton: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </>
+          )}
+
+          {/* NOTE */}
+          {activeEditor === "note" && (
+            <div className="editFormGroup">
+              <label htmlFor="hero-note">Notis</label>
+
+              <input
+                id="hero-note"
+                type="text"
+                value={draftContent.note}
+                onChange={(e) =>
+                  setDraftContent({
+                    ...draftContent,
+                    note: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
         </EditModal>
       )}
     </>

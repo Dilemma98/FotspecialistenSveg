@@ -64,7 +64,7 @@ export default function AdminLayout() {
 
           <div>
             <strong>REDIGERINGSLÄGE</strong>
-            <span>Du redigerar Fotspecialistens webbplats</span>
+            <span>Du redigerar Fotspecialistens hemsida</span>
           </div>
         </div>
 
