@@ -35,12 +35,10 @@ export default function About() {
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [activeField, setActiveField] = useState<AboutField | null>(null);
-  const [activeParagraphIndex, setActiveParagraphIndex] = useState<
-    number | null
-  >(null);
+
   const [errorMessage, setErrorMessage] = useState("");
 
-  const openEditor = (field: AboutField, paragraphIndex?: number) => {
+  const openEditor = (field: AboutField) => {
     if (!content) return;
 
     setDraftContent({
@@ -49,7 +47,6 @@ export default function About() {
     });
 
     setActiveField(field);
-    setActiveParagraphIndex(paragraphIndex ?? null);
     setErrorMessage("");
     setIsEditorOpen(true);
   };
@@ -58,7 +55,6 @@ export default function About() {
     setIsEditorOpen(false);
     setDraftContent(null);
     setActiveField(null);
-    setActiveParagraphIndex(null);
     setErrorMessage("");
   };
 
@@ -136,8 +132,6 @@ export default function About() {
         return "Redigera bilden";
       case "imageCaption":
         return "Redigera bildtext";
-      case "imageCaption":
-        return "Redigera bildens underrubrik";
       case "eyebrow":
         return "Redigera introduktion";
       case "heading":
